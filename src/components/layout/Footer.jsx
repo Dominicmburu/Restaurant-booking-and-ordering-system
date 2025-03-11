@@ -21,7 +21,7 @@ const Footer = () => {
             <div className="col-12">
               <button className="btn btn-warning btn-lg text-dark rounded-pill">
                 <i className="bi bi-telephone-fill me-2"></i>
-                Call us to make order now: +2547-00-000-000
+                Call us to make order now: +2547-99-003-963
               </button>
             </div>
           </div>
