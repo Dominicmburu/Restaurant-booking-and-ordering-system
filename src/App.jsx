@@ -32,7 +32,7 @@ function App() {
         <OrderProvider>
           <Router>
             <Header />
-            <main className="container py-4">
+            <main>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/menu" element={<Menu />} />

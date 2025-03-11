@@ -1,12 +1,53 @@
 import React from 'react';
 
 const Footer = () => {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <footer className="bg-dark text-white text-center py-3">
-      <p className="mb-0">
-        © {new Date().getFullYear()} RestaurantApp. All Rights Reserved.
-      </p>
-    </footer>
+    <>
+      < footer className="footer bg-dark text-white py-5" >
+        <div className="container">
+          <div className="row">
+            <div className="col-12 text-center mb-4">
+              <div className="bg-warning d-inline-block text-dark p-2 rounded">
+                <h3 className="mb-0">RAHA RESTAURANT</h3>
+              </div>
+              <p className="mt-3">Your favorite food, delivered fast and fresh to your doorstep.</p>
+            </div>
+          </div>
+          <div className="row justify-content-center text-center mb-4">
+            <div className="col-12">
+              <button className="btn btn-warning btn-lg text-dark rounded-pill">
+                <i className="bi bi-telephone-fill me-2"></i>
+                Call us to make order now: +2547-00-000-000
+              </button>
+            </div>
+          </div>
+          <div className="row text-center">
+            <div className="col-12">
+              <div className="d-flex justify-content-center mb-4">
+                <a href="#" className="text-warning mx-2"><i className="bi bi-twitter fs-4"></i></a>
+                <a href="#" className="text-warning mx-2"><i className="bi bi-facebook fs-4"></i></a>
+                <a href="#" className="text-warning mx-2"><i className="bi bi-instagram fs-4"></i></a>
+                <a href="#" className="text-warning mx-2"><i className="bi bi-youtube fs-4"></i></a>
+              </div>
+              <p className="mb-0">Raha &copy; All Rights Reserved - 2025</p>
+            </div>
+          </div>
+        </div>
+      </footer >
+
+      <div className="position-fixed bottom-0 end-0 p-3">
+        <button className="btn btn-warning rounded-circle p-3" id="goTopBtn" onClick={scrollToTop}>
+          <i className="bi bi-arrow-up"></i>
+        </button>
+      </div>
+
+    </>
+
+
   );
 };
 
