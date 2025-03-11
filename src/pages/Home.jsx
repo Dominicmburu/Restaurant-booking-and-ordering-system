@@ -1,7 +1,7 @@
 import React from 'react';
 import '../assets/styles/home/styles.css';
 import PopularItemsSection from '../components/home/PopularItemsSection';
-import TestimonialCarousel from '../components/home/testimonials';
+import TestimonialCarousel from '../components/home/Testimonials';
 
 const Home = () => {
     return (
