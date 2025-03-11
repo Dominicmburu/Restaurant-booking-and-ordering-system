@@ -140,7 +140,7 @@ const Home = () => {
                             <button className="btn btn-dark px-4 btn-lg">Get Pizza</button>
                         </div>
                         <div className="col-md-6 order-md-2 text-center">
-                            <img src="/images/pizza_Italian_cheese_pepperoni_slice_food_png__traditional_Italian_cuisine__homemade_favorite-removebg-preview.png" className="img-fluid" alt="Pizza Box" style={{ width: "100%", maxWidth: "60%", height: "auto" }} />
+                            <img src="/images/pizza.png" className="img-fluid" alt="Pizza Box" style={{ width: "100%", maxWidth: "100%", height: "auto" }} />
                         </div>
                     </div>
                 </div>
