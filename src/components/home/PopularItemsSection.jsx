@@ -222,7 +222,7 @@ const PopularItemsSection = () => {
                   {renderStars(item.rating)}
                   <h5 className="card-title text-center">{item.name}</h5>
                   <p className="card-text text-center text-muted">{item.description}</p>
-                  <p className="text-center fw-bold fs-4">${item.price.toFixed(2)}</p>
+                  <p className="text-center fw-bold fs-4">£{item.price.toFixed(2)}</p>
                   <div className="d-grid">
                     <button className="btn btn-warning rounded-pill">Add to cart</button>
                   </div>
