@@ -1,4 +1,3 @@
-// src/contexts/OrderContext.jsx
 import React, { createContext, useState, useContext } from 'react';
 
 export const OrderContext = createContext();
