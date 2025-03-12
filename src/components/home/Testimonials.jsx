@@ -6,46 +6,44 @@ const TestimonialCarousel = () => {
     const carouselRef = useRef(null);
     const transitionRef = useRef(true);
 
-    // Testimonial data
     const testimonials = [
         {
             id: 1,
-            quote: "The service is amazing! Delivery is always on time and the food comes hot and fresh. I love using their app to track my order. Their customer service team is also very responsive.",
+            quote: "AlDiner is a game-changer! I can order from my favorite restaurants in London and have my food delivered hot and fresh every time. Their tracking feature is a lifesaver!",
             name: "Patric Stone",
             position: "Freelancer",
             image: "https://i.pinimg.com/736x/b9/77/2f/b9772fcac522e92b7c0efbf8aed7484c.jpg"
         },
         {
             id: 2,
-            quote: "The table booking system is so convenient! I was able to reserve a spot for my anniversary dinner with just a few clicks. The staff remembered our special occasion and made our evening memorable.",
+            quote: "AlDiner makes ordering effortless. I can browse restaurants, see ratings, and order in minutes. My weekend takeout is sorted!",
             name: "Sarah Johnson",
             position: "Marketing Executive",
             image: "https://i.pinimg.com/736x/0e/bd/b9/0ebdb9f8cb628dc5224bd2f84a2ff9e2.jpg"
         },
         {
             id: 3,
-            quote: "Their pizza is truly the best in town! Crispy crust, fresh toppings, and always delivered piping hot. I've tried many pizza places, but this one has become my family's favorite weekend treat.",
+            quote: "The best selection of restaurants in London! From sushi to burgers, I always find exactly what I'm craving. Delivery is fast and reliable!",
             name: "Michael Rodriguez",
             position: "Software Engineer",
             image: "https://i.pinimg.com/736x/cb/56/80/cb56807ba5e83a29ea50dad951a0be04.jpg"
         },
         {
             id: 4,
-            quote: "As a busy professional, I appreciate how easy it is to order through their mobile app. The interface is intuitive, and I can quickly reorder my favorite meals with just a tap. Definitely a time-saver!",
+            quote: "As someone always on the go, I love how quick and simple it is to order. The app is smooth, and my food arrives in no time!",
             name: "Emma Williams",
             position: "Doctor",
             image: "https://i.pinimg.com/736x/c8/1c/c5/c81cc548ebf9b7ad5e2bb5c666e7dfcc.jpg"
         },
         {
             id: 5,
-            quote: "The variety of cuisine options is impressive! From Italian to Asian, they've got it all. I've been exploring different restaurants through their platform, and each experience has been delightful.",
+            quote: "AlDiner has transformed my food experience! So many options, easy checkout, and excellent customer support!",
             name: "David Chen",
             position: "Food Blogger",
             image: "https://i.pinimg.com/736x/fa/3a/1b/fa3a1b1bb17f2ab5e8fccb632ec42244.jpg"
         }
     ];
 
-    // Clone first slide at the end to create seamless loop
     const extendedTestimonials = [...testimonials, testimonials[0]];
 
     useEffect(() => {
@@ -59,13 +57,12 @@ const TestimonialCarousel = () => {
     }, [isPaused]);
 
     useEffect(() => {
-        // Reset index to 0 instantly when reaching the cloned slide (testimonials.length)
         if (activeIndex === testimonials.length) {
-            transitionRef.current = false; // Disable transition for instant reset
+            transitionRef.current = false; 
             setTimeout(() => {
                 setActiveIndex(0);
-                transitionRef.current = true; // Enable transition back
-            }, 50); // Small delay to prevent flicker
+                transitionRef.current = true; 
+            }, 50); 
         }
     }, [activeIndex, testimonials.length]);
 
@@ -77,7 +74,7 @@ const TestimonialCarousel = () => {
             <div className="container">
                 <div className="text-center mb-5">
                     <p className="text-warning">Testimonials</p>
-                    <h2 className="display-5 fw-bold">Why Our Clients Choose Us</h2>
+                    <h2 className="display-5 fw-bold">Why London Loves AlDiner</h2>
                 </div>
 
                 <div 

@@ -7,7 +7,7 @@ const foodData = {
       id: 1,
       name: "Cheeseburger with Salad",
       image: "https://i.pinimg.com/736x/66/a9/33/66a933deff47b88fb89508b0558e57f6.jpg",
-      description: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem...",
+      description: "Juicy beef patty, fresh lettuce, tomato, and cheese—London’s go-to comfort food.",
       price: 19.00,
       rating: 5
     },
@@ -15,7 +15,7 @@ const foodData = {
       id: 2,
       name: "Royal Cheeseburger with Bacon",
       image: "https://i.pinimg.com/736x/1b/4e/b2/1b4eb2756b6fba998e246c7d604c54a8.jpg",
-      description: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem...",
+      description: "Sizzling bacon, premium beef, and melted cheese served in a soft brioche bun.",
       price: 13.49,
       rating: 4
     },
@@ -23,7 +23,7 @@ const foodData = {
       id: 3,
       name: "Black Gamburgrer with Fishcake",
       image: "https://i.pinimg.com/736x/71/79/1c/71791c304d3657c6b32a11bd13198cf1.jpg",
-      description: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem...",
+      description: "A gourmet charcoal bun with crispy fishcake, creamy sauce, and fresh greens.",
       price: 24.99,
       rating: 5
     },
@@ -31,7 +31,7 @@ const foodData = {
       id: 4,
       name: "Classic Bacon Hamburger",
       image: "https://i.pinimg.com/736x/68/53/58/6853583c00a7f5e712061d09de638295.jpg",
-      description: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem...",
+      description: "Double-smoked bacon, crispy onions, and cheddar on a toasted brioche bun.",
       price: 11.99,
       rating: 3
     }
@@ -41,7 +41,7 @@ const foodData = {
       id: 5,
       name: "Margherita Pizza",
       image: "https://i.pinimg.com/736x/eb/fb/97/ebfb972b3ad4de680c321f64c5121121.jpg",
-      description: "Classic pizza with tomato sauce, mozzarella, and basil.",
+      description: "Authentic Neapolitan-style pizza with fresh basil, mozzarella, and rich tomato sauce.",
       price: 14.99,
       rating: 5
     },
@@ -165,7 +165,7 @@ const PopularItemsSection = () => {
         <div className="row mb-4">
           <div className="col-12 text-center">
             <p className="text-warning">Quick pick</p>
-            <h2 className="display-5 fw-bold">Popular Goods</h2>
+            <h2 className="display-5 fw-bold">London’s Favorites</h2>
           </div>
         </div>
 

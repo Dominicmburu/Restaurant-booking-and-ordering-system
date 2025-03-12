@@ -45,9 +45,9 @@ const Header = () => {
       <Container fluid>
         <Navbar.Brand as={Link} to="/" className={`d-flex align-items-center ${textClass}`}>
           <div className="bg-warning text-dark p-2 rounded me-2">
-            <h4 className="mb-0 fw-bold">RAHA</h4>
+            <h4 className="mb-0 fw-bold">AlDiner</h4>
           </div>
-          <span className="d-none d-md-inline fw-bold">Restaurant</span>
+          <span className="d-none d-md-inline fw-bold">Food Delivery</span>
         </Navbar.Brand>
         
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="border-0">

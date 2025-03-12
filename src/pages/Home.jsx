@@ -10,16 +10,16 @@ const Home = () => {
                 <div className="container py-5">
                     <div className="row align-items-center">
                         <div className="col-md-6 py-5">
-                            <h1 className="display-4 fw-bold mb-3">Raha Restaurant<br /><span className="text-warning fs-1">Table Booking & Online Ordering</span></h1>
+                            <h1 className="display-4 fw-bold mb-3">AlDiner<br /><span className="text-warning fs-1">Food Delivery Platform</span></h1>
                             <p className="desc lead mb-4">
-                                Enjoy a seamless dining experience with our easy-to-use table booking and online ordering system.
-                                Reserve your table in advance or place your order for quick pickup or delivery.
+                                London's premier food delivery service connecting you with hundreds of local restaurants.
+                                Order from your favorite spots and enjoy delicious meals delivered right to your door.
                             </p>
-                            <button className="btn btn-warning btn-lg px-4 fw-bold">Learn More</button>
+                            <button className="btn btn-warning btn-lg px-4 fw-bold">Order Now</button>
                         </div>
 
                         <div className="col-md-6">
-                            <img src="/images/French_Fries.png" alt="French_Fries" className="img-fluid hero-img" />
+                            <img src="/images/French_Fries.png" alt="Food Delivery" className="img-fluid hero-img" />
                         </div>
                     </div>
                 </div>
@@ -31,23 +31,23 @@ const Home = () => {
                         <div className="col-12 col-md-3 mb-4">
                             <div className="category-card rounded p-4 h-100 d-flex align-items-center">
                                 <div className="category-icon bg-warning rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: "80px", height: "80px" }}>
-                                    <i className="bi bi-cup-hot fs-1"></i>
+                                    <i className="bi bi-search fs-3"></i>
                                 </div>
-                                <h5 className="ms-3">Table Booking</h5>
+                                <h5 className="ms-3">Browse Restaurants</h5>
                             </div>
                         </div>
                         <div className="col-12 col-md-3 mb-4">
                             <div className="category-card rounded p-4 h-100 d-flex align-items-center">
                                 <div className="category-icon bg-warning rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: "80px", height: "80px" }}>
-                                    <i className="bi bi-basket fs-1"></i>
+                                    <i className="bi bi-basket fs-3"></i>
                                 </div>
-                                <h5 className="ms-3">Online Orders</h5>
+                                <h5 className="ms-3">Easy Ordering</h5>
                             </div>
                         </div>
                         <div className="col-12 col-md-3 mb-4">
                             <div className="category-card rounded p-4 h-100 d-flex align-items-center">
                                 <div className="category-icon bg-warning rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: "80px", height: "80px" }}>
-                                    <i className="bi bi-truck fs-1"></i>
+                                    <i className="bi bi-truck fs-3"></i>
                                 </div>
                                 <h5 className="ms-3">Fast Delivery</h5>
                             </div>
@@ -55,9 +55,9 @@ const Home = () => {
                         <div className="col-12 col-md-3 mb-4">
                             <div className="category-card rounded p-4 h-100 d-flex align-items-center">
                                 <div className="category-icon bg-warning rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: "80px", height: "80px" }}>
-                                    <i className="bi bi-star fs-1"></i>
+                                    <i className="bi bi-star fs-3"></i>
                                 </div>
-                                <h5 className="ms-3">Top-Rated Dishes</h5>
+                                <h5 className="ms-3">Rate & Review</h5>
                             </div>
                         </div>
                     </div>
@@ -66,17 +66,17 @@ const Home = () => {
 
             <PopularItemsSection />
 
-            < section className="at-home couple" >
+            <section className="at-home couple">
                 <div className="container" id='at-home-container'>
                     <div className="row align-items-center">
                         <div className="col-md-6 mb-4 mb-md-0">
                             <img src="https://i.pinimg.com/736x/f9/65/0e/f9650eea3e945cf305eda995f703541c.jpg" className="img-fluid couple-img" alt="Couple ordering food" />
                         </div>
                         <div className="col-md-6 couple-desc">
-                            <h2 className="display-5 enjoy fw-bold">Enjoy Your Favorite Meals</h2>
-                            <h3 className="display-6 text-warning mb-4">We Bring the Restaurant to You</h3>
-                            <p className="res-s mb-4">Whether you're craving a gourmet meal, a quick snack, or a refreshing drink, we’ve got you covered.
-                                Order online and let us deliver delicious food straight to your doorstep or have a table reserved just for you.</p>
+                            <h2 className="display-5 enjoy fw-bold">Enjoy London's Best Food</h2>
+                            <h3 className="display-6 text-warning mb-4">Delivered To Your Door</h3>
+                            <p className="res-s mb-4">With AlDiner, you can explore cuisines from across London without leaving your home.
+                                We connect you with hundreds of local restaurants to bring authentic flavors with just a few taps.</p>
 
                             <div className="row mt-5 find">
                                 <div className="col-6 mb-4">
@@ -86,7 +86,7 @@ const Home = () => {
                                         </div>
                                         <div>
                                             <h5 className="mb-0">Quick & Easy</h5>
-                                            <p className="mb-0">Order in Seconds</p>
+                                            <p className="mb-0">Order in Minutes</p>
                                         </div>
                                     </div>
                                 </div>
@@ -96,8 +96,8 @@ const Home = () => {
                                             <i className="bi bi-phone text-dark fs-4"></i>
                                         </div>
                                         <div>
-                                            <h5 className="mb-0">Seamless</h5>
-                                            <p className="mb-0">Online Booking</p>
+                                            <h5 className="mb-0">Live Tracking</h5>
+                                            <p className="mb-0">Real-time Updates</p>
                                         </div>
                                     </div>
                                 </div>
@@ -107,68 +107,68 @@ const Home = () => {
                                             <i className="bi bi-geo-alt text-dark fs-4"></i>
                                         </div>
                                         <div>
-                                            <h5 className="mb-0">Widespread</h5>
-                                            <p className="mb-0">Delivery Locations</p>
+                                            <h5 className="mb-0">All London</h5>
+                                            <p className="mb-0">Coverage Areas</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="col-6 mb-4">
                                     <div className="d-flex align-items-center">
                                         <div className="feature-icon bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: "50px", height: "50px" }}>
-                                            <i className="bi bi-people text-dark fs-4"></i>
+                                            <i className="bi bi-credit-card text-dark fs-4"></i>
                                         </div>
                                         <div>
-                                            <h5 className="mb-0">Dine-In</h5>
-                                            <p className="mb-0">Table Reservations</p>
+                                            <h5 className="mb-0">Secure</h5>
+                                            <p className="mb-0">Payment Methods</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <button className="btn btn-warning btn-lg px-4 mt-3">Explore Menu</button>
+                            <button className="btn btn-warning btn-lg px-4 mt-3">Download App</button>
                         </div>
                     </div>
                 </div>
-            </section >
+            </section>
 
-            < section className="best-pizza py-5 bg-warning" >
+            <section className="best-pizza py-5 bg-warning">
                 <div className="container">
                     <div className="row align-items-center">
                         <div className="col-md-6 order-md-1 text-center text-md-start">
-                            <h2 className="display-5 fw-bold">Always<br />the Hottest<br />Pizza</h2>
-                            <p className="lead mb-4">Our pizzas are made with the freshest ingredients and delivered straight to your door. Experience authentic Italian flavors!</p>
-                            <button className="btn btn-dark px-4 btn-lg">Get Pizza</button>
+                            <h2 className="display-5 fw-bold">Get £5 Off<br />Your First<br />Order</h2>
+                            <p className="lead mb-4">Use code ALDINER5 when you place your first order through our app or website and enjoy £5 off your meal!</p>
+                            <button className="btn btn-dark px-4 btn-lg">Start Ordering</button>
                         </div>
                         <div className="col-md-6 order-md-2 text-center">
-                            <img src="/images/pizza.png" className="img-fluid" alt="Pizza Box" style={{ width: "100%", maxWidth: "100%", height: "auto" }} />
+                            <img src="/images/pizza.png" className="img-fluid" alt="Food Delivery" style={{ width: "100%", maxWidth: "100%", height: "auto" }} />
                         </div>
                     </div>
                 </div>
-            </section >
+            </section>
 
-            {/* Restaurant Recommendations */}
-            < section className="restaurant-recommendations py-5" >
+            {/* Featured Restaurants */}
+            <section className="restaurant-recommendations py-5">
                 <div className="container">
                     <div className="text-center mb-5">
-                        <p className="text-warning">Our Recommendations</p>
-                        <h2 className="display-5 fw-bold">Cafes & Restaurants</h2>
+                        <p className="text-warning">Featured Partners</p>
+                        <h2 className="display-5 fw-bold">Popular London Restaurants</h2>
                     </div>
                     <div className="row">
                         <div className="col-md-4 mb-4">
                             <div className="card h-100 border-0 shadow-sm">
                                 <img src="https://i.pinimg.com/236x/3d/d4/a9/3dd4a9302cb0dc3756e83d20cecc1bc6.jpg" className="card-img-top" alt="Burger House" />
                                 <div className="card-header bg-warning text-white border-0">
-                                    <span>Burger</span>
+                                    <span>Burgers</span>
                                 </div>
                                 <div className="card-body">
                                     <h4 className="fw-bold">Burger House</h4>
                                     <div className="d-flex align-items-center mb-2">
-                                        <i className="bi bi-calendar-week text-warning me-2"></i>
-                                        <span>Monday - Saturday</span>
+                                        <i className="bi bi-geo-alt text-warning me-2"></i>
+                                        <span>Camden, London</span>
                                     </div>
                                     <div className="d-flex align-items-center">
-                                        <i className="bi bi-clock text-warning me-2"></i>
-                                        <span>09:00 - 18:00</span>
+                                        <i className="bi bi-currency-pound text-warning me-2"></i>
+                                        <span>£2.50 delivery fee</span>
                                     </div>
                                 </div>
                                 <div className="card-footer bg-white border-0 text-end">
@@ -187,12 +187,12 @@ const Home = () => {
                                 <div className="card-body">
                                     <h4 className="fw-bold">Sushiteria</h4>
                                     <div className="d-flex align-items-center mb-2">
-                                        <i className="bi bi-calendar-week text-warning me-2"></i>
-                                        <span>Monday - Saturday</span>
+                                        <i className="bi bi-geo-alt text-warning me-2"></i>
+                                        <span>Soho, London</span>
                                     </div>
                                     <div className="d-flex align-items-center">
-                                        <i className="bi bi-clock text-warning me-2"></i>
-                                        <span>09:00 - 18:00</span>
+                                        <i className="bi bi-currency-pound text-warning me-2"></i>
+                                        <span>£3.00 delivery fee</span>
                                     </div>
                                 </div>
                                 <div className="card-footer bg-white border-0 text-end">
@@ -209,14 +209,14 @@ const Home = () => {
                                     <span>BBQ</span>
                                 </div>
                                 <div className="card-body">
-                                    <h4 className="fw-bold">Happy Grill Cafe</h4>
+                                    <h4 className="fw-bold">Happy Grill</h4>
                                     <div className="d-flex align-items-center mb-2">
-                                        <i className="bi bi-calendar-week text-warning me-2"></i>
-                                        <span>Monday - Saturday</span>
+                                        <i className="bi bi-geo-alt text-warning me-2"></i>
+                                        <span>Shoreditch, London</span>
                                     </div>
                                     <div className="d-flex align-items-center">
-                                        <i className="bi bi-clock text-warning me-2"></i>
-                                        <span>09:00 - 18:00</span>
+                                        <i className="bi bi-currency-pound text-warning me-2"></i>
+                                        <span>£2.80 delivery fee</span>
                                     </div>
                                 </div>
                                 <div className="card-footer bg-white border-0 text-end">
@@ -228,7 +228,7 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-            </section >
+            </section>
 
             <TestimonialCarousel />
 
@@ -241,7 +241,7 @@ const Home = () => {
                             <div className="d-flex align-items-center justify-content-center justify-content-lg-start">
                                 <i className="bi bi-envelope-open fs-1 me-3"></i>
                                 <div>
-                                    <p className="mb-0">Get the latest news and offers</p>
+                                    <p className="mb-0">Get £10 off your next order</p>
                                     <h3 className="fw-bold mb-0">Subscribe to our newsletter</h3>
                                 </div>
                             </div>
@@ -258,7 +258,7 @@ const Home = () => {
                 </div>
             </section>
 
-        </div >
+        </div>
     );
 };
 
