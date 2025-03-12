@@ -87,11 +87,10 @@
 }
 
 .newsletter {
-    background-color: #ffc107; /* Keep the yellow background */
+    background-color: #ffc107; 
     padding: 40px 0;
 }
 
-/* 📧 Text Styling */
 .newsletter h3 {
     font-size: 1.8rem;
     font-weight: bold;
