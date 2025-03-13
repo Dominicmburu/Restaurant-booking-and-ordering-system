@@ -2,6 +2,7 @@ import React from 'react';
 import '../assets/styles/home/styles.css';
 import PopularItemsSection from '../components/home/PopularItemsSection';
 import TestimonialCarousel from '../components/home/Testimonials';
+import FeaturedRestaurants from '../components/home/FeaturedRestaurants';
 
 const Home = () => {
     return (
@@ -146,89 +147,7 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Featured Restaurants */}
-            <section className="restaurant-recommendations py-5">
-                <div className="container">
-                    <div className="text-center mb-5">
-                        <p className="text-warning">Featured Partners</p>
-                        <h2 className="display-5 fw-bold">Popular London Restaurants</h2>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-4 mb-4">
-                            <div className="card h-100 border-0 shadow-sm">
-                                <img src="https://i.pinimg.com/236x/3d/d4/a9/3dd4a9302cb0dc3756e83d20cecc1bc6.jpg" className="card-img-top" alt="Burger House" />
-                                <div className="card-header bg-warning text-white border-0">
-                                    <span>Burgers</span>
-                                </div>
-                                <div className="card-body">
-                                    <h4 className="fw-bold">Burger House</h4>
-                                    <div className="d-flex align-items-center mb-2">
-                                        <i className="bi bi-geo-alt text-warning me-2"></i>
-                                        <span>Camden, London</span>
-                                    </div>
-                                    <div className="d-flex align-items-center">
-                                        <i className="bi bi-currency-pound text-warning me-2"></i>
-                                        <span>£2.50 delivery fee</span>
-                                    </div>
-                                </div>
-                                <div className="card-footer bg-white border-0 text-end">
-                                    <button className="btn btn-sm btn-warning rounded-circle">
-                                        <i className="bi bi-arrow-right"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 mb-4">
-                            <div className="card h-100 border-0 shadow-sm">
-                                <img src="https://i.pinimg.com/736x/44/e6/ba/44e6bae24b7e4bb2f8a686bf0d69740f.jpg" className="card-img-top" alt="Sushiteria" />
-                                <div className="card-header bg-warning text-white border-0">
-                                    <span>Asian food</span>
-                                </div>
-                                <div className="card-body">
-                                    <h4 className="fw-bold">Sushiteria</h4>
-                                    <div className="d-flex align-items-center mb-2">
-                                        <i className="bi bi-geo-alt text-warning me-2"></i>
-                                        <span>Soho, London</span>
-                                    </div>
-                                    <div className="d-flex align-items-center">
-                                        <i className="bi bi-currency-pound text-warning me-2"></i>
-                                        <span>£3.00 delivery fee</span>
-                                    </div>
-                                </div>
-                                <div className="card-footer bg-white border-0 text-end">
-                                    <button className="btn btn-sm btn-warning rounded-circle">
-                                        <i className="bi bi-arrow-right"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 mb-4">
-                            <div className="card h-100 border-0 shadow-sm">
-                                <img src="https://i.pinimg.com/736x/39/9e/7d/399e7d0df89cd4babb1971c7b5ac062b.jpg" className="card-img-top" alt="Happy Grill Cafe" />
-                                <div className="card-header bg-warning text-white border-0">
-                                    <span>BBQ</span>
-                                </div>
-                                <div className="card-body">
-                                    <h4 className="fw-bold">Happy Grill</h4>
-                                    <div className="d-flex align-items-center mb-2">
-                                        <i className="bi bi-geo-alt text-warning me-2"></i>
-                                        <span>Shoreditch, London</span>
-                                    </div>
-                                    <div className="d-flex align-items-center">
-                                        <i className="bi bi-currency-pound text-warning me-2"></i>
-                                        <span>£2.80 delivery fee</span>
-                                    </div>
-                                </div>
-                                <div className="card-footer bg-white border-0 text-end">
-                                    <button className="btn btn-sm btn-warning rounded-circle">
-                                        <i className="bi bi-arrow-right"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <FeaturedRestaurants/>
 
             <TestimonialCarousel />
 

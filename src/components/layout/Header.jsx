@@ -7,7 +7,7 @@ const Header = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
-  
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 80) {
@@ -16,7 +16,7 @@ const Header = () => {
         setScrolled(false);
       }
     };
-    
+
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -24,22 +24,21 @@ const Header = () => {
   }, []);
 
   const isHomePage = location.pathname === '/';
-  
+
   const navbarBg = isHomePage && !scrolled ? 'transparent' : 'dark';
   const navbarVariant = isHomePage && !scrolled ? 'light' : 'dark';
   const navbarPosition = isHomePage ? 'fixed-top' : '';
   const textClass = isHomePage && !scrolled ? 'text-dark' : 'text-light';
 
   return (
-    <Navbar 
-      bg={navbarBg} 
-      variant={navbarVariant} 
-      expand="lg" 
+    <Navbar
+      bg={navbarBg}
+      variant={navbarVariant}
+      expand="lg"
       className={`py-3 ${navbarPosition} transition-all w-100`}
       style={{
         boxShadow: scrolled ? '0 2px 10px rgba(0, 0, 0, 0.1)' : 'none',
-        transition: 'all 0.3s ease-in-out',
-        overflow: 'hidden'
+        transition: 'all 0.3s ease-in-out'
       }}
     >
       <Container fluid>
@@ -49,65 +48,65 @@ const Header = () => {
           </div>
           <span className="d-none d-md-inline fw-bold">Food Delivery</span>
         </Navbar.Brand>
-        
+
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="border-0">
           <i className="bi bi-list fs-4"></i>
         </Navbar.Toggle>
-        
+
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mx-auto">
-            <Nav.Link 
-              as={Link} 
-              to="/" 
+            <Nav.Link
+              as={Link}
+              to="/"
               className={`mx-2 ${location.pathname === '/' ? 'fw-bold text-warning' : textClass}`}
             >
               Home
             </Nav.Link>
-            <Nav.Link 
-              as={Link} 
-              to="/menu" 
+            <Nav.Link
+              as={Link}
+              to="/menu"
               className={`mx-2 ${location.pathname === '/menu' ? 'fw-bold text-warning' : textClass}`}
             >
               Menu
             </Nav.Link>
-            <Nav.Link 
-              as={Link} 
-              to="/booking" 
+            <Nav.Link
+              as={Link}
+              to="/booking"
               className={`mx-2 ${location.pathname === '/booking' ? 'fw-bold text-warning' : textClass}`}
             >
               Bookings
             </Nav.Link>
-            <Nav.Link 
-              as={Link} 
-              to="/about" 
+            <Nav.Link
+              as={Link}
+              to="/about"
               className={`mx-2 ${location.pathname === '/about' ? 'fw-bold text-warning' : textClass}`}
             >
               About Us
             </Nav.Link>
-            <Nav.Link 
-              as={Link} 
-              to="/contact" 
+            <Nav.Link
+              as={Link}
+              to="/contact"
               className={`mx-2 ${location.pathname === '/contact' ? 'fw-bold text-warning' : textClass}`}
             >
               Contact
             </Nav.Link>
           </Nav>
-          
+
           <div className="d-flex align-items-center">
             {!user ? (
               <div>
-                <Button 
-                  variant="outline-warning" 
-                  as={Link} 
-                  to="/login" 
+                <Button
+                  variant="outline-warning"
+                  as={Link}
+                  to="/login"
                   className="me-2 px-3"
                 >
                   Login
                 </Button>
-                <Button 
-                  variant="warning" 
-                  as={Link} 
-                  to="/register" 
+                <Button
+                  variant="warning"
+                  as={Link}
+                  to="/register"
                   className="px-3 text-dark fw-bold"
                 >
                   Sign Up
@@ -115,12 +114,12 @@ const Header = () => {
               </div>
             ) : (
               <Dropdown align="end">
-                <Dropdown.Toggle 
-                  variant={isHomePage && !scrolled ? "light" : "dark"} 
-                  id="dropdown-basic" 
+                <Dropdown.Toggle
+                  variant={isHomePage && !scrolled ? "light" : "dark"}
+                  id="dropdown-basic"
                   className="d-flex align-items-center border-0 bg-transparent shadow-none"
                 >
-                  <div className="me-2 rounded-circle bg-warning d-flex align-items-center justify-content-center" 
+                  <div className="me-2 rounded-circle bg-warning d-flex align-items-center justify-content-center"
                     style={{ width: "40px", height: "40px" }}>
                     <span className="fw-bold text-dark">
                       {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
@@ -129,14 +128,35 @@ const Header = () => {
                   <span className={textClass}>{user.name || 'User'}</span>
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu className="border-0 shadow mt-2">
+                <Dropdown.Menu
+                  className="border-0 shadow mt-2"
+                  popperConfig={{
+                    modifiers: [
+                      {
+                        name: 'preventOverflow',
+                        options: {
+                          boundary: document.body,
+                        },
+                      },
+                    ],
+                  }}
+                  style={{
+                    zIndex: 9999,
+                  }}
+                >
                   <Dropdown.Item as={Link} to="/dashboard">
                     <i className="bi bi-speedometer2 me-2"></i>Dashboard
                   </Dropdown.Item>
                   <Dropdown.Item as={Link} to="/profile">
                     <i className="bi bi-person me-2"></i>My Profile
                   </Dropdown.Item>
-                  <Dropdown.Item as={Link} to="/orders">
+                  <Dropdown.Item as={Link} to="/cart">
+                    <i className="bi bi-cart me-2"></i>My Cart
+                  </Dropdown.Item>
+                  {/* <Dropdown.Item as={Link} to="/checkout">
+                    <i className="bi bi-cart me-2"></i>
+                  </Dropdown.Item> */}
+                  <Dropdown.Item as={Link} to="/order">
                     <i className="bi bi-bag me-2"></i>My Orders
                   </Dropdown.Item>
                   <Dropdown.Divider />

@@ -10,9 +10,11 @@ const timeSlots = [
   '20:00', '20:30', '21:00', '21:30'
 ];
 
+const restaurants = ['Burger House', 'Sushiteria', 'Happy Grill'];
+
 const BookingForm = ({ selectedDate, selectedTime, onTimeChange, guestCount, onGuestCountChange, selectedTable }) => {
   const { createBooking } = useBooking();
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', specialRequests: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', specialRequests: '', restaurant: '' });
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
@@ -24,7 +26,7 @@ const BookingForm = ({ selectedDate, selectedTime, onTimeChange, guestCount, onG
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!selectedDate || !selectedTime || !selectedTable) {
+    if (!selectedDate || !selectedTime || !selectedTable || !formData.restaurant) {
       setError('Please select a date, time, and table before booking');
       return;
     }
@@ -44,7 +46,7 @@ const BookingForm = ({ selectedDate, selectedTime, onTimeChange, guestCount, onG
       });
 
       setSuccess(true);
-      setFormData({ name: '', email: '', phone: '', specialRequests: '' });
+      setFormData({ name: '', email: '', phone: '', specialRequests: '', restaurant: '' });
     } catch (err) {
       setError('Unable to complete booking. Please try again.');
     }
@@ -55,6 +57,16 @@ const BookingForm = ({ selectedDate, selectedTime, onTimeChange, guestCount, onG
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">Your booking has been confirmed! Check your email for details.</Alert>}
 
+      <Form.Group className="mb-3">
+        <Form.Label>Select Restaurant</Form.Label>
+        <Form.Select name="restaurant" value={formData.restaurant} onChange={handleChange} required>
+          <option value="">Choose a restaurant</option>
+          {restaurants.map((restaurant, index) => (
+            <option key={index} value={restaurant}>{restaurant}</option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+      
       <Row className="mb-3">
         <Col>
           <Form.Group>

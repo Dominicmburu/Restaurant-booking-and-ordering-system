@@ -24,6 +24,8 @@ import OrderConfirmation from './components/ordering/OrderConfirmation';
 
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import Cart from './components/ordering/Cart';
+import Profile from './pages/profile';
 
 function App() {
   return (
@@ -38,6 +40,7 @@ function App() {
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/booking" element={<BookingPage />} />
                 <Route path="/order" element={<OrderPage />} />
+                <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/order-confirmation" element={<OrderConfirmation />} />
                 <Route path="/dashboard/*" element={<Dashboard />} />
@@ -47,6 +50,7 @@ function App() {
                 <Route path="/restaurant/:id" element={<RestaurantProfile />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/profile" element={<Profile />} />
               </Routes>
             </main>
             <Footer />
