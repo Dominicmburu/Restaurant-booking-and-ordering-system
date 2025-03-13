@@ -25,7 +25,7 @@ import OrderConfirmation from './components/ordering/OrderConfirmation';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Cart from './components/ordering/Cart';
-import Profile from './pages/profile';
+import Profile from './pages/Profile';
 
 function App() {
   return (
