@@ -28,7 +28,7 @@ const Header = () => {
   const navbarBg = isHomePage && !scrolled ? 'transparent' : 'dark';
   const navbarVariant = isHomePage && !scrolled ? 'light' : 'dark';
   const navbarPosition = isHomePage ? 'fixed-top' : '';
-  const textClass = isHomePage && !scrolled ? 'text-dark' : 'text-light';
+  const textClass = isHomePage && !scrolled ? 'text-light' : 'text-light';
 
   return (
     <Navbar
@@ -117,7 +117,7 @@ const Header = () => {
                 <Dropdown.Toggle
                   variant={isHomePage && !scrolled ? "light" : "dark"}
                   id="dropdown-basic"
-                  className="d-flex align-items-center border-0 bg-transparent shadow-none"
+                  className="d-flex align-items-center border-0 bg-dark shadow-none"
                 >
                   <div className="me-2 rounded-circle bg-warning d-flex align-items-center justify-content-center"
                     style={{ width: "40px", height: "40px" }}>
@@ -144,7 +144,7 @@ const Header = () => {
                     zIndex: 9999,
                   }}
                 >
-                  <Dropdown.Item as={Link} to="/dashboard">
+                  <Dropdown.Item as={Link} to="/admin/dashboard">
                     <i className="bi bi-speedometer2 me-2"></i>Dashboard
                   </Dropdown.Item>
                   <Dropdown.Item as={Link} to="/profile">
@@ -153,9 +153,6 @@ const Header = () => {
                   <Dropdown.Item as={Link} to="/cart">
                     <i className="bi bi-cart me-2"></i>My Cart
                   </Dropdown.Item>
-                  {/* <Dropdown.Item as={Link} to="/checkout">
-                    <i className="bi bi-cart me-2"></i>
-                  </Dropdown.Item> */}
                   <Dropdown.Item as={Link} to="/order">
                     <i className="bi bi-bag me-2"></i>My Orders
                   </Dropdown.Item>
