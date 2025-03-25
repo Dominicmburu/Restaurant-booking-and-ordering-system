@@ -8,7 +8,7 @@ const Dashboard = () => {
     totalOrders: 235,
     totalBookings: 112,
     totalRevenue: 8456.78,
-    activeRestaurants: 42
+    activeRestaurants: 3
   });
 
   const revenueData = [
@@ -153,14 +153,14 @@ const Dashboard = () => {
               <div className="card-body">
                 <h5 className="card-title mb-3">Quick Actions</h5>
                 <div className="d-grid gap-2">
-                  <button className="btn d-flex justify-content-between align-items-center" style={{ backgroundColor: 'rgba(255, 193, 7, 0.1)', color: '#856404' }}>
+                  {/* <button className="btn d-flex justify-content-between align-items-center" style={{ backgroundColor: 'rgba(255, 193, 7, 0.1)', color: '#856404' }}>
                     <span>Add New Restaurant</span>
                     <Utensils size={20} />
                   </button>
                   <button className="btn d-flex justify-content-between align-items-center" style={{ backgroundColor: 'rgba(13, 110, 253, 0.1)', color: '#0d6efd' }}>
                     <span>Create Promotion</span>
                     <TrendingUp size={20} />
-                  </button>
+                  </button> */}
                   <button className="btn d-flex justify-content-between align-items-center" style={{ backgroundColor: 'rgba(220, 53, 69, 0.1)', color: '#dc3545' }}>
                     <span>View Support Tickets</span>
                     <AlertCircle size={20} />

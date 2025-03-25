@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Form, Button, Card, ListGroup, Badge, Tab, Nav } from 'react-bootstrap';
-import { FaLocationArrow, FaCreditCard, FaMoneyBill, FaClock, FaUser, FaPhone, FaHome, FaMapMarkerAlt, FaCheck } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Form, Button, Card, ListGroup, Badge, Tab, Nav, Alert } from 'react-bootstrap';
+import { FaLocationArrow, FaCreditCard, FaMoneyBill, FaClock, FaUser, FaPhone, FaHome, FaMapMarkerAlt, FaCheck, FaStore } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const CheckoutPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { items = [], orderSummary = {} } = location.state || {};
-  const { orderType, subtotal = 0, deliveryFee = 0, tip = 0, total = 0 } = orderSummary;
+  const { orderType, subtotal = 0, deliveryFee = 0, tip = 0, total = 0, location: restaurantLocation } = orderSummary;
   
   const [formData, setFormData] = useState({
     name: '',
@@ -15,7 +15,7 @@ const CheckoutPage = () => {
     email: '',
     address: '',
     addressDetails: '',
-    city: 'London',
+    city: 'Birmingham',
     postcode: '',
     paymentMethod: 'card',
     cardNumber: '',
@@ -23,19 +23,61 @@ const CheckoutPage = () => {
     cardCVC: '',
     deliveryTime: 'asap',
     scheduledTime: '',
-    notes: ''
+    notes: '',
+    selectedLocation: restaurantLocation ? restaurantLocation.name : ''
   });
   
   const [validated, setValidated] = useState(false);
+  const [locationError, setLocationError] = useState(false);
+  
+  const restaurantLocations = [
+    {
+      name: "TurkNazz Shirley",
+      address: "148-150 Stratford Road, B90 3BD",
+      maxSeating: 50
+    },
+    {
+      name: "TurkNazz Moseley",
+      address: "107 Alcester Road, B13 8DD",
+      maxSeating: 40
+    },
+    {
+      name: "TurkNazz Sutton Coldfield",
+      address: "22 Beeches walk, B73 6HN",
+      maxSeating: 45
+    }
+  ];
+  
+  useEffect(() => {
+    // If a location was passed from the previous page, set it
+    if (restaurantLocation) {
+      setFormData(prevData => ({
+        ...prevData,
+        selectedLocation: restaurantLocation.name
+      }));
+    }
+  }, [restaurantLocation]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
+    // Clear location error if a location is selected
+    if (name === 'selectedLocation' && value) {
+      setLocationError(false);
+    }
   };
   
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
+    
+    // Check if a restaurant location is selected
+    if (!formData.selectedLocation) {
+      setLocationError(true);
+      e.stopPropagation();
+      return;
+    }
     
     if (form.checkValidity() === false) {
       e.stopPropagation();
@@ -43,13 +85,19 @@ const CheckoutPage = () => {
       return;
     }
     
+    // Find the full location object
+    const selectedLocationObj = restaurantLocations.find(loc => loc.name === formData.selectedLocation);
+    
     // In a real app, you would process the order here
     navigate('/order-confirmation', { 
       state: { 
         orderNumber: Math.floor(100000 + Math.random() * 900000),
         orderDetails: {
           items,
-          summary: orderSummary,
+          summary: {
+            ...orderSummary,
+            location: selectedLocationObj
+          },
           customer: formData
         }
       }
@@ -63,6 +111,42 @@ const CheckoutPage = () => {
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Row>
           <Col md={8}>
+            {/* Restaurant Location Selection */}
+            <Card className="mb-4 shadow-sm" style={{ borderRadius: '15px' }}>
+              <Card.Body>
+                <h5 className="mb-3">Select Restaurant Location</h5>
+                {locationError && (
+                  <Alert variant="danger" className="mb-3">
+                    Please select a restaurant location.
+                  </Alert>
+                )}
+                <Form.Group controlId="selectedLocation">
+                  <Form.Label>Choose which TurkNazz location you'd like to order from</Form.Label>
+                  <div className="mb-3">
+                    {restaurantLocations.map((rest, index) => (
+                      <Form.Check
+                        key={index}
+                        type="radio"
+                        id={`location-${index}`}
+                        name="selectedLocation"
+                        value={rest.name}
+                        label={
+                          <div>
+                            <strong>{rest.name}</strong>
+                            <div className="text-muted small">{rest.address}</div>
+                          </div>
+                        }
+                        checked={formData.selectedLocation === rest.name}
+                        onChange={handleChange}
+                        className="mb-2"
+                        isInvalid={locationError}
+                      />
+                    ))}
+                  </div>
+                </Form.Group>
+              </Card.Body>
+            </Card>
+            
             <Card className="mb-4 shadow-sm" style={{ borderRadius: '15px' }}>
               <Card.Body>
                 <h5 className="mb-3">Contact Information</h5>
@@ -194,7 +278,9 @@ const CheckoutPage = () => {
             
             <Card className="mb-4 shadow-sm" style={{ borderRadius: '15px' }}>
               <Card.Body>
-                <h5 className="mb-3">Delivery Time</h5>
+                <h5 className="mb-3">
+                  {orderType === 'delivery' ? 'Delivery Time' : 'Pickup Time'}
+                </h5>
                 <Form.Group className="mb-3">
                   <div className="d-flex flex-wrap gap-3">
                     <Form.Check
@@ -232,7 +318,7 @@ const CheckoutPage = () => {
                 
                 {formData.deliveryTime === 'scheduled' && (
                   <Form.Group controlId="scheduledTime" className="mt-3">
-                    <Form.Label>Select delivery time</Form.Label>
+                    <Form.Label>Select {orderType === 'delivery' ? 'delivery' : 'pickup'} time</Form.Label>
                     <Form.Control
                       required
                       type="datetime-local"
@@ -352,6 +438,11 @@ const CheckoutPage = () => {
             <Card className="shadow-sm position-sticky" style={{ top: '24px', borderRadius: '15px' }}>
               <Card.Header className="bg-white border-0 pt-3">
                 <h5 className="mb-0">Order Summary</h5>
+                {formData.selectedLocation && (
+                  <div className="text-muted small d-flex align-items-center mt-1">
+                    <FaStore className="me-1" /> {formData.selectedLocation}
+                  </div>
+                )}
               </Card.Header>
               <Card.Body className="px-0 pt-2">
                 <ListGroup variant="flush">
