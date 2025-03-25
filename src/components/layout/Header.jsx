@@ -44,9 +44,9 @@ const Header = () => {
       <Container fluid>
         <Navbar.Brand as={Link} to="/" className={`d-flex align-items-center ${textClass}`}>
           <div className="bg-warning text-dark p-2 rounded me-2">
-            <h4 className="mb-0 fw-bold">AlDiner</h4>
+            <h4 className="mb-0 fw-bold">TurkNazz</h4>
           </div>
-          <span className="d-none d-md-inline fw-bold">Food Delivery</span>
+          <span className="d-none d-md-inline fw-bold">Authentic Turkish Cuisine</span>
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="border-0">
@@ -71,10 +71,17 @@ const Header = () => {
             </Nav.Link>
             <Nav.Link
               as={Link}
+              to="/checkout"
+              className={`mx-2 ${location.pathname === '/checkout' ? 'fw-bold text-warning' : textClass}`}
+            >
+              Checkout
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
               to="/booking"
               className={`mx-2 ${location.pathname === '/booking' ? 'fw-bold text-warning' : textClass}`}
             >
-              Bookings
+              Book a Table
             </Nav.Link>
             <Nav.Link
               as={Link}
@@ -92,7 +99,7 @@ const Header = () => {
             </Nav.Link>
           </Nav>
 
-          <div className="d-flex align-items-center">
+          {/* <div className="d-flex align-items-center">
             {!user ? (
               <div>
                 <Button
@@ -163,7 +170,7 @@ const Header = () => {
                 </Dropdown.Menu>
               </Dropdown>
             )}
-          </div>
+          </div> */}
         </Navbar.Collapse>
       </Container>
     </Navbar>

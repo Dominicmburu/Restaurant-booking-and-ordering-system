@@ -12,21 +12,21 @@ const BookingPage = () => {
 
   return (
     <Container className="py-5">
-      <h2 className="text-center fw-bold mb-4 text-warning">Book a Table at AlDiner</h2>
-      <p className="text-center text-muted">Reserve a table at your favorite restaurant in London and enjoy a hassle-free dining experience.</p>
-      
+      <h2 className="text-center fw-bold mb-4 text-warning">Book a Table at TurkNazz</h2>
+      <p className="text-center text-muted">Reserve a table at one of our three convenient TurkNazz locations and enjoy an authentic Turkish dining experience.</p>
+
       <Row className="gy-4">
         <Col md={7}>
           <Card className="shadow-sm p-3 border-warning">
             <h5 className="fw-bold mb-3 text-dark">Select Date & Time</h5>
-            <BookingCalendar 
+            <BookingCalendar
               selectedDate={selectedDate}
               onDateChange={setSelectedDate}
             />
-            
+
             <div className="mt-4">
               <h5 className="fw-bold text-dark">Available Tables</h5>
-              <TableLayout 
+              <TableLayout
                 selectedDate={selectedDate}
                 selectedTime={selectedTime}
                 guestCount={guestCount}
@@ -40,7 +40,7 @@ const BookingPage = () => {
         <Col md={5}>
           <Card className="shadow-sm p-3 border-warning">
             <h5 className="fw-bold mb-3 text-dark">Complete Your Reservation</h5>
-            <BookingForm 
+            <BookingForm
               selectedDate={selectedDate}
               selectedTime={selectedTime}
               onTimeChange={setSelectedTime}

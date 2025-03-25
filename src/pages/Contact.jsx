@@ -40,7 +40,7 @@ const Contact = () => {
                                 <i className="bi bi-envelope text-warning fs-3 me-3"></i>
                                 <div>
                                     <p className="mb-0 text-muted">Email</p>
-                                    <p className="fw-bold">support@aldiner.com</p>
+                                    <p className="fw-bold">support@TurkNazz.com</p>
                                 </div>
                             </div>
 
@@ -56,7 +56,7 @@ const Contact = () => {
                                 <i className="bi bi-geo-alt text-warning fs-3 me-3"></i>
                                 <div>
                                     <p className="mb-0 text-muted">Address</p>
-                                    <p className="fw-bold">London, UK</p>
+                                    <p className="fw-bold">London</p>
                                 </div>
                             </div>
                         </Card>

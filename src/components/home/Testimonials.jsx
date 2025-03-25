@@ -9,35 +9,35 @@ const TestimonialCarousel = () => {
     const testimonials = [
         {
             id: 1,
-            quote: "AlDiner is a game-changer! I can order from my favorite restaurants in London and have my food delivered hot and fresh every time. Their tracking feature is a lifesaver!",
+            quote: "TurkNazz has completely transformed my Turkish food experience. The kebabs are unmatched, and the service is always friendly and efficient. I can't wait to come back for more!",
             name: "Patric Stone",
             position: "Freelancer",
             image: "https://i.pinimg.com/736x/b9/77/2f/b9772fcac522e92b7c0efbf8aed7484c.jpg"
         },
         {
             id: 2,
-            quote: "AlDiner makes ordering effortless. I can browse restaurants, see ratings, and order in minutes. My weekend takeout is sorted!",
+            quote: "Every time I order from TurkNazz, I feel like I’m back in Istanbul. The flavors are authentic, and the food is always fresh. It's my go-to spot for a hearty meal!",
             name: "Sarah Johnson",
             position: "Marketing Executive",
             image: "https://i.pinimg.com/736x/0e/bd/b9/0ebdb9f8cb628dc5224bd2f84a2ff9e2.jpg"
         },
         {
             id: 3,
-            quote: "The best selection of restaurants in London! From sushi to burgers, I always find exactly what I'm craving. Delivery is fast and reliable!",
+            quote: "I’ve tried many Turkish restaurants, but TurkNazz is by far the best. From the Lahmacun to the baklava, every dish is a masterpiece. I always leave satisfied!",
             name: "Michael Rodriguez",
             position: "Software Engineer",
             image: "https://i.pinimg.com/736x/cb/56/80/cb56807ba5e83a29ea50dad951a0be04.jpg"
         },
         {
             id: 4,
-            quote: "As someone always on the go, I love how quick and simple it is to order. The app is smooth, and my food arrives in no time!",
+            quote: "The food at TurkNazz is incredible. The kebabs are always perfectly cooked, and the side dishes are bursting with flavor. This place is a hidden gem!",
             name: "Emma Williams",
             position: "Doctor",
             image: "https://i.pinimg.com/736x/c8/1c/c5/c81cc548ebf9b7ad5e2bb5c666e7dfcc.jpg"
         },
         {
             id: 5,
-            quote: "AlDiner has transformed my food experience! So many options, easy checkout, and excellent customer support!",
+            quote: "I love the authenticity of TurkNazz. The atmosphere is cozy, the service is great, and the food is always top-notch. Definitely my favorite Turkish restaurant in town!",
             name: "David Chen",
             position: "Food Blogger",
             image: "https://i.pinimg.com/736x/fa/3a/1b/fa3a1b1bb17f2ab5e8fccb632ec42244.jpg"
@@ -74,7 +74,7 @@ const TestimonialCarousel = () => {
             <div className="container">
                 <div className="text-center mb-5">
                     <p className="text-warning">Testimonials</p>
-                    <h2 className="display-5 fw-bold">Why London Loves AlDiner</h2>
+                    <h2 className="display-5 fw-bold">Why Our Customers Love TurkNazz</h2>
                 </div>
 
                 <div 

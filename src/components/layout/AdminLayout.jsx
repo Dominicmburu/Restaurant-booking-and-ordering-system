@@ -13,11 +13,9 @@ const AdminLayout = ({ children, title }) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   
-  // Get current location to determine active link
   const location = useLocation ? useLocation() : { pathname: window.location.pathname };
   const currentPath = location.pathname;
   
-  // Check window width and set sidebar default state
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
@@ -27,13 +25,10 @@ const AdminLayout = ({ children, title }) => {
       }
     };
     
-    // Set initial state
     handleResize();
     
-    // Add event listener
     window.addEventListener('resize', handleResize);
     
-    // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -43,21 +38,17 @@ const AdminLayout = ({ children, title }) => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Close dropdowns when clicking outside of them
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Close notification dropdown if clicking outside
       if (notificationsOpen && !event.target.closest('.notifications-container')) {
         setNotificationsOpen(false);
       }
       
-      // Close user menu dropdown if clicking outside
       if (userMenuOpen && !event.target.closest('.user-menu-container')) {
         setUserMenuOpen(false);
       }
     };
     
-    // Close sidebar on mobile when clicking outside
     const handleSidebarClickOutside = (event) => {
       if (sidebarOpen && window.innerWidth < 768 && 
           !event.target.closest('.sidebar') && 
@@ -77,8 +68,8 @@ const AdminLayout = ({ children, title }) => {
 
   const navItems = [
     { icon: Home, label: 'Dashboard', href: '/admin/dashboard' },
-    { icon: Users, label: 'Restaurants', href: '/admin/restaurants' },
-    { icon: Users, label: 'Restaurants List', href: '/admin/restaurants/list' },
+    // { icon: Users, label: 'Restaurants', href: '/admin/restaurants' },
+    // { icon: Users, label: 'Restaurants List', href: '/admin/restaurants/list' },
     { icon: MenuIcon, label: 'Menu', href: '/admin/menu' },
     { icon: ShoppingBag, label: 'Orders', href: '/admin/orders' },
     { icon: Calendar, label: 'Bookings', href: '/admin/bookings' },

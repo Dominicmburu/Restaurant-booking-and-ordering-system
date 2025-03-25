@@ -1,22 +1,46 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../assets/styles/home/styles.css';
 import PopularItemsSection from '../components/home/PopularItemsSection';
 import TestimonialCarousel from '../components/home/Testimonials';
 import FeaturedRestaurants from '../components/home/FeaturedRestaurants';
 
 const Home = () => {
+    const navigate = useNavigate();
+
+    const handleBookTableClick = () => {
+        navigate('/booking');
+    };
+
+    const handleOrderTakeawayClick = () => {
+        navigate('/menu');
+    };
+
     return (
         <div className="food-delivery-app">
             <section className="hero text-white position-relative">
                 <div className="container py-5">
                     <div className="row align-items-center">
                         <div className="col-md-6 py-5">
-                            <h1 className="display-4 fw-bold mb-3">AlDiner<br /><span className="text-warning fs-1">Food Delivery Platform</span></h1>
+                            <h1 className="display-4 fw-bold mb-3">TurkNazz<br /><span className="text-warning fs-1">Authentic Turkish Cuisine</span></h1>
                             <p className="desc lead mb-4">
-                                London's premier food delivery service connecting you with hundreds of local restaurants.
-                                Order from your favorite spots and enjoy delicious meals delivered right to your door.
+                                Enjoy authentic Turkish cuisine from our three convenient locations.
+                                Book a table or order delicious takeaway – fresh, flavorful, and just a click away!
                             </p>
-                            <button className="btn btn-warning btn-lg px-4 fw-bold">Order Now</button>
+                            <div className="d-flex">
+                                <button
+                                    className="btn btn-warning btn-lg px-4 fw-bold me-3"
+                                    onClick={handleBookTableClick}
+                                >
+                                    Book a Table
+                                </button>
+                                <button
+                                    className="btn btn-outline-light btn-lg px-4 fw-bold"
+                                    onClick={handleOrderTakeawayClick}
+                                >
+                                    Order Takeaway
+                                </button>
+                            </div>
                         </div>
 
                         <div className="col-md-6">
@@ -34,7 +58,7 @@ const Home = () => {
                                 <div className="category-icon bg-warning rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: "80px", height: "80px" }}>
                                     <i className="bi bi-search fs-3"></i>
                                 </div>
-                                <h5 className="ms-3">Browse Restaurants</h5>
+                                <h5 className="ms-3">Browse Our Locations</h5>
                             </div>
                         </div>
                         <div className="col-12 col-md-3 mb-4">
@@ -65,6 +89,7 @@ const Home = () => {
                 </div>
             </section>
 
+
             <PopularItemsSection />
 
             <section className="at-home couple">
@@ -74,10 +99,9 @@ const Home = () => {
                             <img src="https://i.pinimg.com/736x/f9/65/0e/f9650eea3e945cf305eda995f703541c.jpg" className="img-fluid couple-img" alt="Couple ordering food" />
                         </div>
                         <div className="col-md-6 couple-desc">
-                            <h2 className="display-5 enjoy fw-bold">Enjoy London's Best Food</h2>
-                            <h3 className="display-6 text-warning mb-4">Delivered To Your Door</h3>
-                            <p className="res-s mb-4">With AlDiner, you can explore cuisines from across London without leaving your home.
-                                We connect you with hundreds of local restaurants to bring authentic flavors with just a few taps.</p>
+                            <h2 className="display-5 enjoy fw-bold">Authentic Turkish Cuisine</h2>
+                            <h3 className="display-6 text-warning mb-4">Delivered to Your Door or Dine-In</h3>
+                            <p className="res-s mb-4">Experience the finest Turkish flavors at TurkNazz. Whether you’re enjoying a meal at one of our three locations or ordering takeaway, our dishes will transport you straight to Turkey.</p>
 
                             <div className="row mt-5 find">
                                 <div className="col-6 mb-4">
@@ -108,8 +132,8 @@ const Home = () => {
                                             <i className="bi bi-geo-alt text-dark fs-4"></i>
                                         </div>
                                         <div>
-                                            <h5 className="mb-0">All London</h5>
-                                            <p className="mb-0">Coverage Areas</p>
+                                            <h5 className="mb-0">Available at 3 Locations</h5>
+                                            <p className="mb-0">Shirley, Moseley, Sutton Coldfield</p>
                                         </div>
                                     </div>
                                 </div>
@@ -119,8 +143,8 @@ const Home = () => {
                                             <i className="bi bi-credit-card text-dark fs-4"></i>
                                         </div>
                                         <div>
-                                            <h5 className="mb-0">Secure</h5>
-                                            <p className="mb-0">Payment Methods</p>
+                                            <h5 className="mb-0">Secure Payment</h5>
+                                            <p className="mb-0">Multiple Payment Options</p>
                                         </div>
                                     </div>
                                 </div>
@@ -132,12 +156,13 @@ const Home = () => {
                 </div>
             </section>
 
+
             <section className="best-pizza py-5 bg-warning">
                 <div className="container">
                     <div className="row align-items-center">
                         <div className="col-md-6 order-md-1 text-center text-md-start">
                             <h2 className="display-5 fw-bold">Get £5 Off<br />Your First<br />Order</h2>
-                            <p className="lead mb-4">Use code ALDINER5 when you place your first order through our app or website and enjoy £5 off your meal!</p>
+                            <p className="lead mb-4">Use code TURKNAAZZ5 when you place your first order through our website and enjoy £5 off your meal!</p>
                             <button className="btn btn-dark px-4 btn-lg">Start Ordering</button>
                         </div>
                         <div className="col-md-6 order-md-2 text-center">
@@ -147,7 +172,8 @@ const Home = () => {
                 </div>
             </section>
 
-            <FeaturedRestaurants/>
+
+            <FeaturedRestaurants />
 
             <TestimonialCarousel />
 
@@ -155,13 +181,12 @@ const Home = () => {
             <section className="newsletter py-4 bg-warning">
                 <div className="container">
                     <div className="row align-items-center text-center text-lg-start">
-
                         <div className="col-lg-6 mb-3 mb-lg-0">
                             <div className="d-flex align-items-center justify-content-center justify-content-lg-start">
                                 <i className="bi bi-envelope-open fs-1 me-3"></i>
                                 <div>
                                     <p className="mb-0">Get £10 off your next order</p>
-                                    <h3 className="fw-bold mb-0">Subscribe to our newsletter</h3>
+                                    <h3 className="fw-bold mb-0">Subscribe to our newsletter for special offers and updates</h3>
                                 </div>
                             </div>
                         </div>
@@ -172,10 +197,10 @@ const Home = () => {
                                 <button className="btn btn-dark btn-lg">Subscribe</button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </section>
+
 
         </div>
     );

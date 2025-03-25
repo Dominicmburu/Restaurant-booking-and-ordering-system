@@ -10,7 +10,12 @@ const timeSlots = [
   '20:00', '20:30', '21:00', '21:30'
 ];
 
-const restaurants = ['Burger House', 'Sushiteria', 'Happy Grill'];
+// Updated restaurant list to include the TurkNazz locations
+const restaurants = [
+  { name: 'TurkNazz Shirley', address: '148-150 Stratford Road, B90 3BD' },
+  { name: 'TurkNazz Moseley', address: '107 Alcester Road, B13 8DD' },
+  { name: 'TurkNazz Sutton Coldfield', address: '22 Beeches Walk, B73 6HN' }
+];
 
 const BookingForm = ({ selectedDate, selectedTime, onTimeChange, guestCount, onGuestCountChange, selectedTable }) => {
   const { createBooking } = useBooking();
@@ -26,8 +31,9 @@ const BookingForm = ({ selectedDate, selectedTime, onTimeChange, guestCount, onG
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Ensure restaurant, time, table, and required fields are selected
     if (!selectedDate || !selectedTime || !selectedTable || !formData.restaurant) {
-      setError('Please select a date, time, and table before booking');
+      setError('Please select a date, time, table, and restaurant before booking');
       return;
     }
 
@@ -57,16 +63,20 @@ const BookingForm = ({ selectedDate, selectedTime, onTimeChange, guestCount, onG
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">Your booking has been confirmed! Check your email for details.</Alert>}
 
+      {/* Restaurant Selection */}
       <Form.Group className="mb-3">
         <Form.Label>Select Restaurant</Form.Label>
         <Form.Select name="restaurant" value={formData.restaurant} onChange={handleChange} required>
           <option value="">Choose a restaurant</option>
           {restaurants.map((restaurant, index) => (
-            <option key={index} value={restaurant}>{restaurant}</option>
+            <option key={index} value={restaurant.name}>
+              {restaurant.name} - {restaurant.address}
+            </option>
           ))}
         </Form.Select>
       </Form.Group>
       
+      {/* Preferred Time and Guest Count */}
       <Row className="mb-3">
         <Col>
           <Form.Group>
@@ -89,6 +99,7 @@ const BookingForm = ({ selectedDate, selectedTime, onTimeChange, guestCount, onG
         </Col>
       </Row>
 
+      {/* Personal Details */}
       <Form.Group className="mb-3">
         <Form.Label>Full Name</Form.Label>
         <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} required />
@@ -109,6 +120,7 @@ const BookingForm = ({ selectedDate, selectedTime, onTimeChange, guestCount, onG
         <Form.Control as="textarea" rows={3} name="specialRequests" value={formData.specialRequests} onChange={handleChange} />
       </Form.Group>
 
+      {/* Submit Button */}
       <Button type="submit" variant="primary" className="w-100">Confirm Reservation</Button>
     </Form>
   );

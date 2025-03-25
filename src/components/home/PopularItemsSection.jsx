@@ -1,147 +1,153 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../assets/styles/home/popularitem.css';
 
 const foodData = {
-  fastfood: [
+  kebabs: [
     {
       id: 1,
-      name: "Cheeseburger with Salad",
-      image: "https://i.pinimg.com/736x/66/a9/33/66a933deff47b88fb89508b0558e57f6.jpg",
-      description: "Juicy beef patty, fresh lettuce, tomato, and cheese—London’s go-to comfort food.",
-      price: 19.00,
-      rating: 5
-    },
-    {
-      id: 2,
-      name: "Royal Cheeseburger with Bacon",
-      image: "https://i.pinimg.com/736x/1b/4e/b2/1b4eb2756b6fba998e246c7d604c54a8.jpg",
-      description: "Sizzling bacon, premium beef, and melted cheese served in a soft brioche bun.",
-      price: 13.49,
-      rating: 4
-    },
-    {
-      id: 3,
-      name: "Black Gamburgrer with Fishcake",
-      image: "https://i.pinimg.com/736x/71/79/1c/71791c304d3657c6b32a11bd13198cf1.jpg",
-      description: "A gourmet charcoal bun with crispy fishcake, creamy sauce, and fresh greens.",
-      price: 24.99,
-      rating: 5
-    },
-    {
-      id: 4,
-      name: "Classic Bacon Hamburger",
-      image: "https://i.pinimg.com/736x/68/53/58/6853583c00a7f5e712061d09de638295.jpg",
-      description: "Double-smoked bacon, crispy onions, and cheddar on a toasted brioche bun.",
-      price: 11.99,
-      rating: 3
-    }
-  ],
-  hotpizza: [
-    {
-      id: 5,
-      name: "Margherita Pizza",
-      image: "https://i.pinimg.com/736x/eb/fb/97/ebfb972b3ad4de680c321f64c5121121.jpg",
-      description: "Authentic Neapolitan-style pizza with fresh basil, mozzarella, and rich tomato sauce.",
+      name: "Adana Kebab",
+      image: "https://i.pinimg.com/736x/b8/5a/78/b85a78b34d5bf0dd17236240c9f2d387.jpg",
+      description: "Juicy minced lamb kebab, grilled to perfection and served with rice and grilled vegetables.",
       price: 14.99,
       rating: 5
     },
     {
-      id: 6,
-      name: "Pepperoni Pizza",
-      image: "https://i.pinimg.com/736x/35/83/09/358309081a759381f2dd056d9166a53e.jpg",
-      description: "Pizza topped with pepperoni slices and cheese.",
-      price: 16.99,
+      id: 2,
+      name: "Chicken Shish Kebab",
+      image: "https://i.pinimg.com/736x/99/9a/da/999adae17a774357f4f762261c4c05a8.jpg",
+      description: "Succulent marinated chicken cubes grilled on skewers, served with pita bread and a side of salad.",
+      price: 12.49,
       rating: 4
     },
     {
-      id: 7,
-      name: "Veggie Supreme Pizza",
-      image: "https://i.pinimg.com/736x/db/85/51/db85512b9639124f168454dd4de03605.jpg",
-      description: "Pizza loaded with fresh vegetables and cheese.",
-      price: 15.99,
-      rating: 4
-    },
-    {
-      id: 8,
-      name: "BBQ Chicken Pizza",
-      image: "https://i.pinimg.com/736x/6d/b3/b2/6db3b23857bc76d782fc292b7df8a6ae.jpg",
-      description: "Pizza with BBQ chicken, onions and cheese.",
-      price: 17.99,
-      rating: 5
-    }
-  ],
-  asianfood: [
-    {
-      id: 9,
-      name: "Pad Thai",
-      image: "https://i.pinimg.com/736x/98/c9/5d/98c95df876af9448fe3da03c0a9507cc.jpg",
-      description: "Thai stir-fried noodles with eggs, tofu, and bean sprouts.",
+      id: 3,
+      name: "Lamb Doner",
+      image: "https://i.pinimg.com/736x/e2/b3/fd/e2b3fd9dc048e0540fe8ff75ebfcf74a.jpg",
+      description: "Tender lamb cooked on a vertical rotisserie, served in a wrap with salad and sauce.",
       price: 13.99,
       rating: 5
     },
     {
-      id: 10,
-      name: "Sushi Platter",
-      image: "https://i.pinimg.com/736x/fc/b5/96/fcb596a832f5460dc3c8ade4d657d8a2.jpg",
-      description: "Assorted sushi rolls with soy sauce and wasabi.",
-      price: 22.99,
+      id: 4,
+      name: "Chicken Doner",
+      image: "https://i.pinimg.com/736x/03/48/a6/0348a61190f963687f7d8e9e3a6068e1.jpg",
+      description: "Deliciously seasoned chicken served with pita bread, fresh veggies, and your choice of sauce.",
+      price: 11.99,
+      rating: 4
+    }
+  ],
+  pizzas: [
+    {
+      id: 5,
+      name: "Turkish Lahmacun",
+      image: "https://i.pinimg.com/736x/77/51/c6/7751c6b45b2cce7607fc9c0ec15c2d5a.jpg",
+      description: "A traditional Turkish flatbread with minced lamb, vegetables, and spices, a perfect savory delight.",
+      price: 9.99,
       rating: 5
     },
     {
+      id: 6,
+      name: "Turkish Pide",
+      image: "https://i.pinimg.com/736x/c8/65/d0/c865d029b4df63f37b1eaf53b527b864.jpg",
+      description: "A Turkish-style pizza with a soft, thin crust, topped with your choice of meat, cheese, and vegetables.",
+      price: 14.49,
+      rating: 5
+    },
+    {
+      id: 7,
+      name: "Cheese Pide",
+      image: "https://i.pinimg.com/736x/7c/d8/a7/7cd8a72daffef00a6269a9aae69f8080.jpg",
+      description: "A cheese-filled Turkish pide, served hot and crispy, a perfect choice for cheese lovers.",
+      price: 12.99,
+      rating: 4
+    },
+    {
+      id: 8,
+      name: "Su Böreği",
+      image: "https://i.pinimg.com/736x/ab/3e/0d/ab3e0d2162fff9ec4212c69e46d5bb2e.jpg",
+      description: "A traditional Turkish pastry made with layers of dough, cheese, and herbs, often served as a light meal.",
+      price: 8.99,
+      rating: 5
+    }
+  ],
+  mezes: [
+    {
+      id: 9,
+      name: "Hummus",
+      image: "https://i.pinimg.com/736x/b6/07/b8/b607b8e01c40928a4d46e9abff687519.jpg",
+      description: "A creamy, flavorful spread made from chickpeas, tahini, garlic, and lemon juice.",
+      price: 5.99,
+      rating: 5
+    },
+    {
+      id: 10,
+      name: "Baba Ghanoush",
+      image: "https://i.pinimg.com/736x/e5/68/68/e56868e5e18ec25558e0aba4e8217369.jpg",
+      description: "A smoky, tangy dip made from roasted eggplant, tahini, garlic, and olive oil.",
+      price: 6.49,
+      rating: 4
+    },
+    {
       id: 11,
-      name: "Chicken Curry",
-      image: "https://i.pinimg.com/736x/40/ad/a5/40ada5bc5ab7421296e865d8af1bfac7.jpg",
-      description: "Spicy chicken curry with vegetables.",
-      price: 15.99,
+      name: "Feta Cheese Salad",
+      image: "https://i.pinimg.com/736x/14/0f/56/140f5627f12fd4593b64bc419393e029.jpg",
+      description: "A fresh and tangy salad made with feta cheese, olives, tomatoes, cucumbers, and a lemony dressing.",
+      price: 7.99,
       rating: 4
     },
     {
       id: 12,
-      name: "Beef Teriyaki",
-      image: "https://i.pinimg.com/736x/3e/ca/b7/3ecab72bef25f6166b9c2f68c3f7a98a.jpg",
-      description: "Grilled beef with teriyaki sauce and rice.",
-      price: 18.99,
+      name: "Sigara Böreği",
+      image: "https://i.pinimg.com/736x/2a/4d/51/2a4d5196d8f4309c20c9f31bb37d6877.jpg",
+      description: "Crispy, fried pastry rolls filled with feta cheese and spinach.",
+      price: 6.99,
       rating: 5
     }
   ],
-  rawmeat: [
+  desserts: [
     {
       id: 13,
-      name: "Premium Beef Steak",
-      image: "https://i.pinimg.com/736x/8a/3d/30/8a3d305a96ca3b3d7aae9332fdf4c113.jpg",
-      description: "Raw premium quality beef steak ready to cook.",
-      price: 29.99,
+      name: "Baklava",
+      image: "https://i.pinimg.com/736x/18/bb/0b/18bb0bd33415bd27e99a66c9d5cb5e4c.jpg",
+      description: "A sweet and flaky pastry filled with chopped nuts and sweet syrup, a Turkish classic.",
+      price: 4.99,
       rating: 5
     },
     {
       id: 14,
-      name: "Lamb Chops",
-      image: "https://i.pinimg.com/736x/d0/65/7f/d0657f995a38ada8c7b6e4a293ad4d68.jpg",
-      description: "Fresh lamb chops with herbs and spices.",
-      price: 27.99,
-      rating: 4
-    },
-    {
-      id: 15,
-      name: "Chicken Breasts",
-      image: "https://i.pinimg.com/736x/75/61/85/756185733748af1a10ffdd61d9b18e7a.jpg",
-      description: "Boneless chicken breasts, perfect for grilling.",
-      price: 12.99,
+      name: "Künefe",
+      image: "https://i.pinimg.com/736x/58/d6/43/58d643bf15e8bba67c97041931a1b446.jpg",
+      description: "A warm dessert made from shredded filo dough, filled with sweet cheese, and soaked in syrup.",
+      price: 6.49,
       rating: 5
     },
     {
-      id: 16,
-      name: "Pork Ribs",
-      image: "https://i.pinimg.com/736x/81/a2/9b/81a29bbfb8adba7f51d110b273e89e4c.jpg",
-      description: "Raw pork ribs, ideal for barbecue.",
-      price: 19.99,
+      id: 15,
+      name: "Rice Pudding",
+      image: "https://i.pinimg.com/736x/06/ce/7a/06ce7a8fd84c3f8e0a5ca5f403df5403.jpg",
+      description: "A creamy, comforting dessert made from rice, milk, and sugar, flavored with vanilla and cinnamon.",
+      price: 3.99,
       rating: 4
+    },
+    {
+      id: 16,
+      name: "Turkish Delight",
+      image: "https://i.pinimg.com/736x/e2/de/46/e2de462ee862d81f7bedf585ff09618e.jpg",
+      description: "Soft, chewy candy made with sugar, cornstarch, and flavored with rosewater or lemon.",
+      price: 5.49,
+      rating: 5
     }
   ]
 };
 
 const PopularItemsSection = () => {
-  const [activeCategory, setActiveCategory] = useState('fastfood');
+  const [activeCategory, setActiveCategory] = useState('kebabs');
+  const navigate = useNavigate();
+
+  const handleBookClick = () => {
+    navigate('/menu');
+  };
 
   const renderStars = (rating) => {
     if (rating === 0) return null;
@@ -165,50 +171,45 @@ const PopularItemsSection = () => {
         <div className="row mb-4">
           <div className="col-12 text-center">
             <p className="text-warning">Quick pick</p>
-            <h2 className="display-5 fw-bold">London’s Favorites</h2>
+            <h2 className="display-5 fw-bold">TurkNazz Favorites</h2>
           </div>
         </div>
 
         <div className="row mb-4">
           <div className="col-12 d-flex justify-content-center">
             <ul className="nav nav-pills flex-column flex-md-row w-100">
-
               <li className="nav-item mx-1 flex-fill">
                 <button
-                  className={`nav-link text-center w-100 ${activeCategory === 'fastfood' ? 'active' : ''}`}
-                  onClick={() => handleCategoryChange('fastfood')}
+                  className={`nav-link text-center w-100 ${activeCategory === 'kebabs' ? 'active' : ''}`}
+                  onClick={() => handleCategoryChange('kebabs')}
                 >
-                  FastFood
+                  Kebabs
                 </button>
               </li>
-
               <li className="nav-item mx-1 flex-fill">
                 <button
-                  className={`nav-link text-center w-100 ${activeCategory === 'hotpizza' ? 'active' : ''}`}
-                  onClick={() => handleCategoryChange('hotpizza')}
+                  className={`nav-link text-center w-100 ${activeCategory === 'pizzas' ? 'active' : ''}`}
+                  onClick={() => handleCategoryChange('pizzas')}
                 >
-                  Hot Pizza
+                  Pizzas
                 </button>
               </li>
-
               <li className="nav-item mx-1 flex-fill">
                 <button
-                  className={`nav-link text-center w-100 ${activeCategory === 'asianfood' ? 'active' : ''}`}
-                  onClick={() => handleCategoryChange('asianfood')}
+                  className={`nav-link text-center w-100 ${activeCategory === 'mezes' ? 'active' : ''}`}
+                  onClick={() => handleCategoryChange('mezes')}
                 >
-                  Asian Food
+                  Mezes
                 </button>
               </li>
-
               <li className="nav-item mx-1 flex-fill">
                 <button
-                  className={`nav-link text-center w-100 ${activeCategory === 'rawmeat' ? 'active' : ''}`}
-                  onClick={() => handleCategoryChange('rawmeat')}
+                  className={`nav-link text-center w-100 ${activeCategory === 'desserts' ? 'active' : ''}`}
+                  onClick={() => handleCategoryChange('desserts')}
                 >
-                  Raw Meat
+                  Desserts
                 </button>
               </li>
-
             </ul>
           </div>
         </div>
@@ -224,7 +225,7 @@ const PopularItemsSection = () => {
                   <p className="card-text text-center text-muted">{item.description}</p>
                   <p className="text-center fw-bold fs-4">£{item.price.toFixed(2)}</p>
                   <div className="d-grid">
-                    <button className="btn btn-warning rounded-pill">Add to cart</button>
+                    <button className="btn btn-warning rounded-pill" onClick={handleBookClick}>Add to cart</button>
                   </div>
                 </div>
               </div>

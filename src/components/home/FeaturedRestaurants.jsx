@@ -1,66 +1,68 @@
-import { useNavigate } from "react-router-dom"; 
+import React from 'react';
+import { useNavigate } from "react-router-dom";
 
 const FeaturedRestaurants = () => {
   const navigate = useNavigate();
 
   const restaurants = [
     {
-      name: "Burger House",
-      category: "Burgers",
-      location: "Camden, London",
-      deliveryFee: 2.5,
-      image: "https://i.pinimg.com/236x/3d/d4/a9/3dd4a9302cb0dc3756e83d20cecc1bc6.jpg",
+      name: "TurkNazz Shirley",
+      address: "148-150 Stratford Road, B90 3BD",
+      image: "https://i.pinimg.com/736x/60/65/6c/60656cdf3d4c402d1ac133195cb5b828.jpg",
+      maxSeating: 50
     },
     {
-      name: "Sushiteria",
-      category: "Asian Food",
-      location: "Soho, London",
-      deliveryFee: 3.0,
-      image: "https://i.pinimg.com/736x/44/e6/ba/44e6bae24b7e4bb2f8a686bf0d69740f.jpg",
+      name: "TurkNazz Moseley",
+      address: "107 Alcester Road, B13 8DD",
+      image: "https://i.pinimg.com/736x/3c/57/7c/3c577cd2ec4cf36536a3543f77a133b5.jpg",
+      maxSeating: 40
     },
     {
-      name: "Happy Grill",
-      category: "BBQ",
-      location: "Shoreditch, London",
-      deliveryFee: 2.8,
-      image: "https://i.pinimg.com/736x/39/9e/7d/399e7d0df89cd4babb1971c7b5ac062b.jpg",
-    },
+      name: "TurkNazz Sutton Coldfield",
+      address: "22 Beeches walk, B73 6HN",
+      image: "https://i.pinimg.com/736x/c4/45/bd/c445bd941d37902b87a321afed6761ad.jpg",
+      maxSeating: 45
+    }
   ];
 
-  return (
-    <section className="restaurant-recommendations py-5">
-      <div className="container">
-        <div className="text-center mb-5">
-          <p className="text-warning">Featured Partners</p>
-          <h2 className="display-5 fw-bold">Popular London Restaurants</h2>
-        </div>
+  const handleTableSelect = () => {
+    navigate('/menu');
+  };
 
+  const handleRestaurantSelect = () => {
+    navigate('/booking');
+  };
+
+  return (
+    <section className="restaurant-locations py-5">
+      <div className="container">
+        <h2 className="text-center mb-4">Our Locations</h2>
         <div className="row">
           {restaurants.map((restaurant, index) => (
             <div key={index} className="col-md-4 mb-4">
-              <div className="card h-100 border-0 shadow-sm">
-                <img src={restaurant.image} className="card-img-top" alt={restaurant.name} />
-                <div className="card-header bg-warning text-white border-0">
-                  <span>{restaurant.category}</span>
-                </div>
+              <div className="card h-100">
+                <img 
+                  src={restaurant.image} 
+                  className="card-img-top" 
+                  alt={restaurant.name}
+                />
                 <div className="card-body">
-                  <h4 className="fw-bold">{restaurant.name}</h4>
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="bi bi-geo-alt text-warning me-2"></i>
-                    <span>{restaurant.location}</span>
+                  <h5 className="card-title">{restaurant.name}</h5>
+                  <p className="card-text">{restaurant.address}</p>
+                  <div className="d-flex justify-content-between">
+                    <button 
+                      className="btn btn-warning"
+                      onClick={handleRestaurantSelect}
+                    >
+                      Book a Table
+                    </button>
+                    <button 
+                      className="btn btn-dark"
+                      onClick={handleTableSelect}
+                    >
+                      Order Takeaway
+                    </button>
                   </div>
-                  <div className="d-flex align-items-center">
-                    <i className="bi bi-currency-pound text-warning me-2"></i>
-                    <span>£{restaurant.deliveryFee.toFixed(2)} delivery fee</span>
-                  </div>
-                </div>
-                <div className="card-footer bg-white border-0 text-end">
-                  <button 
-                    className="btn btn-sm btn-warning rounded-circle"
-                    onClick={() => navigate(`/restaurant/${restaurant.name.toLowerCase().replace(/\s+/g, '-')}`)}
-                  >
-                    <i className="bi bi-arrow-right"></i>
-                  </button>
                 </div>
               </div>
             </div>
