@@ -1,64 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Badge, Row, Col, Container } from 'react-bootstrap';
-import { useBooking } from '../../hooks/useBooking';
+import React from 'react';
+import { Row, Col, Button, Badge } from 'react-bootstrap';
 
-const dummyTables = [
-  { id: 1, number: 1, capacity: 2 },
-  { id: 2, number: 2, capacity: 2 },
-  { id: 3, number: 3, capacity: 4 },
-  { id: 4, number: 4, capacity: 4 },
-  { id: 5, number: 5, capacity: 6 },
-  { id: 6, number: 6, capacity: 8 },
-];
-
-const TableLayout = ({ selectedDate, selectedTime, guestCount, selectedTable, onTableSelect }) => {
-  const { getAvailableTables } = useBooking();
-  const [tables, setTables] = useState(dummyTables);
-  const [availableTables, setAvailableTables] = useState([]);
-
-  useEffect(() => {
-    const fetchAvailableTables = async () => {
-      if (selectedDate && selectedTime && guestCount) {
-        const available = tables.filter(table => table.capacity >= guestCount);
-        setAvailableTables(available.map(table => table.id));
-      } else {
-        setAvailableTables([]);
-      }
-    };
-    fetchAvailableTables();
-  }, [selectedDate, selectedTime, guestCount]);
-
-  const isTableAvailable = (tableId) => availableTables.includes(tableId);
+const TableLayout = ({ selectedDate, selectedTime, guestCount, selectedTable, tables, onTableSelect }) => {
   const isTableSelected = (tableId) => selectedTable === tableId;
 
+  // Group tables by capacity for better display
+  const groupedTables = tables.reduce((acc, table) => {
+    if (!acc[table.capacity]) {
+      acc[table.capacity] = [];
+    }
+    acc[table.capacity].push(table);
+    return acc;
+  }, {});
+
   return (
-    <Container>
-      <Row className="mb-2">
-        <Col>
-          <Badge bg="success">Available</Badge> <Badge bg="primary">Selected</Badge> <Badge bg="secondary">Unavailable</Badge>
-        </Col>
-      </Row>
+    <div>
+      {Object.keys(groupedTables).sort((a, b) => a - b).map((capacity) => (
+        <div key={capacity} className="mb-3">
+          <h6 className="mb-2">Tables for {capacity} guests:</h6>
+          <Row>
+            {groupedTables[capacity].map((table) => {
+              const available = table.isAvailable && table.capacity >= guestCount;
+              const selected = isTableSelected(table.id);
 
-      <Row>
-        {tables.map((table) => {
-          const available = isTableAvailable(table.id);
-          const selected = isTableSelected(table.id);
-
-          return (
-            <Col xs={4} key={table.id} className="text-center">
-              <Button
-                variant={selected ? 'primary' : available ? 'success' : 'secondary'}
-                disabled={!available}
-                onClick={() => onTableSelect(selected ? null : table.id)}
-                className="w-100 mb-2"
-              >
-                Table {table.number} ({table.capacity} guests)
-              </Button>
-            </Col>
-          );
-        })}
-      </Row>
-    </Container>
+              return (
+                <Col xs={4} key={table.id} className="mb-2">
+                  <Button
+                    variant={selected ? 'primary' : available ? 'outline-success' : 'outline-secondary'}
+                    disabled={!available}
+                    onClick={() => onTableSelect(selected ? null : table.id)}
+                    className="w-100 position-relative"
+                    style={{ height: '60px' }}
+                  >
+                    <div>
+                      Table {table.tableNumber}
+                      {selected && (
+                        <Badge bg="warning" className="position-absolute top-0 end-0">
+                          Selected
+                        </Badge>
+                      )}
+                    </div>
+                  </Button>
+                </Col>
+              );
+            })}
+          </Row>
+        </div>
+      ))}
+      {!selectedTable && selectedTime && (
+        <div className="text-center text-muted mt-2">
+          Please select a table to complete your booking
+        </div>
+      )}
+    </div>
   );
 };
 

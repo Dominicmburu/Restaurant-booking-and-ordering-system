@@ -1,118 +1,196 @@
 import React from 'react';
-import { Container, Button, Card, Row, Col, ListGroup } from 'react-bootstrap';
+import { Container, Button, Card, Row, Col, ListGroup, Badge } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaCheckCircle, FaMotorcycle, FaHome, FaStore, FaClock, FaUtensils, FaTruck } from 'react-icons/fa';
+import { 
+  FaCheckCircle, 
+  FaMotorcycle, 
+  FaHome, 
+  FaStore, 
+  FaClock, 
+  FaUtensils, 
+  FaTruck, 
+  FaEnvelope,
+  FaPhoneAlt,
+  FaShoppingBasket
+} from 'react-icons/fa';
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { orderNumber, orderDetails } = location.state || {};
   
-  // Extract order information if available
-  const { items = [], summary = {}, customer = {} } = orderDetails || {};
-  const { orderType, location: restaurant } = summary || {};
+  const { order = {}, customer = {} } = orderDetails || {};
+  const { orderItems = [], orderType, total, restaurant } = order;
   
-  // Estimated delivery time (30-45 minutes for delivery, 15-20 for pickup)
   const getEstimatedTime = () => {
-    if (orderType === 'delivery') {
-      return '30-45 minutes';
-    } else {
-      return '15-20 minutes';
-    }
+    return orderType === 'DELIVERY' 
+      ? '30-45 minutes' 
+      : '15-20 minutes';
   };
 
   return (
     <Container className="py-5">
       <Row className="justify-content-center">
-        <Col md={8}>
-          <Card className="text-center p-4 shadow-lg border-0" style={{ borderRadius: '15px' }}>
-            <FaCheckCircle className="text-success mx-auto mb-3" size={80} />
-            
-            <h2 className="fw-bold mb-2">Thank You for Your Order!</h2>
-            <h5 className="text-muted mb-4">Order #{orderNumber || 'Confirmed'}</h5>
-            
-            <Card className="mb-4 border-0 bg-light" style={{ borderRadius: '10px' }}>
-              <Card.Body className="text-start">
-                <h4 className="mb-3">Order Details</h4>
-                
-                {restaurant && (
-                  <div className="d-flex align-items-center mb-3">
-                    <FaStore className="text-warning me-2" />
-                    <div>
-                      <div className="fw-bold">{restaurant.name}</div>
-                      <div className="text-muted small">{restaurant.address}</div>
-                    </div>
-                  </div>
-                )}
-                
-                <div className="d-flex align-items-center mb-3">
-                  {orderType === 'delivery' ? (
-                    <FaMotorcycle className="text-warning me-2" />
-                  ) : (
-                    <FaUtensils className="text-warning me-2" />
-                  )}
-                  <div>
-                    <div className="fw-bold">
-                      {orderType === 'delivery' ? 'Delivery' : 'Pickup'}
-                    </div>
-                    <div className="text-muted small">
-                      {orderType === 'delivery' 
-                        ? `To: ${customer.address}, ${customer.city} ${customer.postcode}`
-                        : 'Ready for collection at restaurant'}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="d-flex align-items-center mb-3">
-                  <FaClock className="text-warning me-2" />
-                  <div>
-                    <div className="fw-bold">Estimated {orderType === 'delivery' ? 'Delivery' : 'Preparation'} Time</div>
-                    <div className="text-muted small">{getEstimatedTime()}</div>
-                  </div>
-                </div>
-              </Card.Body>
-            </Card>
-            
-            <p className="mb-4">
-              We've sent a confirmation email to <b>{customer.email || 'your email address'}</b> with your order details. 
-              You'll also receive updates about your order status.
-            </p>
-            
-            <div className="bg-light p-3 mb-4 rounded">
-              <h5 className="text-start mb-3">Why Our Customers Keep Coming Back</h5>
-              <div className="text-start mb-2">
-                <FaTruck className="text-warning me-2" />
-                <span className="fw-bold">Fast Delivery</span> - We pride ourselves on getting your food to you hot and fresh
-              </div>
-              <div className="text-start mb-2">
-                <FaUtensils className="text-warning me-2" />
-                <span className="fw-bold">Authentic Turkish Cuisine</span> - Prepared by expert chefs using traditional recipes
-              </div>
-              <div className="text-start">
-                <FaStore className="text-warning me-2" />
-                <span className="fw-bold">Three Convenient Locations</span> - Serving all of Birmingham with our delicious offerings
-              </div>
+        <Col md={10} lg={8}>
+          <Card 
+            className="shadow-lg border-0" 
+            style={{ 
+              borderRadius: '20px', 
+              overflow: 'hidden' 
+            }}
+          >
+            {/* Header Section */}
+            <div 
+              className="bg-warning text-center p-4" 
+              style={{ 
+                background: 'linear-gradient(135deg, #FFC107 0%, #FF9800 100%)' 
+              }}
+            >
+              <FaCheckCircle 
+                className="text-white mb-3" 
+                size={80} 
+                style={{ 
+                  filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))' 
+                }} 
+              />
+              <h2 className="text-white fw-bold mb-2">Order Confirmed!</h2>
+              <h5 className="text-white-50">Order #{orderNumber}</h5>
             </div>
-            
-            <div className="d-flex flex-column flex-md-row gap-2 justify-content-center">
-              <Button variant="outline-secondary" onClick={() => navigate('/')}>
-                <FaHome className="me-1" /> Return to Home
-              </Button>
-              
-              <Button variant="warning" onClick={() => navigate('/menu')}>
-                Place Another Order
-              </Button>
-              
-              {orderType === 'delivery' && (
-                <Button variant="outline-primary" onClick={() => navigate('/booking')}>
-                  Book a Table for Next Time
+
+            {/* Order Details */}
+            <Card.Body className="p-4">
+              <Row>
+                <Col md={7}>
+                  <h4 className="mb-3">
+                    <FaShoppingBasket className="me-2 text-warning" />
+                    Order Summary
+                  </h4>
+                  <ListGroup variant="flush">
+                    {orderItems.map((item, index) => (
+                      <ListGroup.Item 
+                        key={index} 
+                        className="d-flex justify-content-between align-items-center px-0"
+                      >
+                        <div>
+                          <span className="fw-bold">{item.menuItem.name}</span>
+                          {item.notes && (
+                            <Badge 
+                              bg="light" 
+                              text="dark" 
+                              className="ms-2"
+                            >
+                              {item.notes}
+                            </Badge>
+                          )}
+                          <div className="text-muted small">
+                            {item.quantity} × £{parseFloat(item.price).toFixed(2)}
+                          </div>
+                        </div>
+                        <span className="fw-bold">
+                          £{(item.quantity * parseFloat(item.price)).toFixed(2)}
+                        </span>
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+
+                  <div className="mt-3 border-top pt-3">
+                    <div className="d-flex justify-content-between">
+                      <span>Subtotal</span>
+                      <span>£{parseFloat(total).toFixed(2)}</span>
+                    </div>
+                    {orderType === 'DELIVERY' && (
+                      <div className="d-flex justify-content-between">
+                        <span>Delivery Fee</span>
+                        <span>£2.99</span>
+                      </div>
+                    )}
+                    <div 
+                      className="d-flex justify-content-between fw-bold mt-2 pt-2 border-top"
+                    >
+                      <span>Total</span>
+                      <span>£{parseFloat(total).toFixed(2)}</span>
+                    </div>
+                  </div>
+                </Col>
+
+                <Col md={5}>
+                  <Card className="bg-light border-0 mb-3">
+                    <Card.Body>
+                      <h5 className="mb-3">
+                        <FaStore className="me-2 text-warning" />
+                        Restaurant Details
+                      </h5>
+                      <div>
+                        <strong>{restaurant?.name}</strong>
+                        <p className="text-muted small mb-1">
+                          {restaurant?.address}
+                        </p>
+                        <p className="text-muted small">
+                          {restaurant?.phone}
+                        </p>
+                      </div>
+                    </Card.Body>
+                  </Card>
+
+                  <Card className="bg-light border-0">
+                    <Card.Body>
+                      <h5 className="mb-3">
+                        <FaClock className="me-2 text-warning" />
+                        Order Timing
+                      </h5>
+                      <div>
+                        <strong>
+                          {orderType === 'DELIVERY' ? 'Delivery' : 'Pickup'} Time
+                        </strong>
+                        <p className="text-muted small">
+                          Estimated: {getEstimatedTime()}
+                        </p>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+            </Card.Body>
+
+            {/* Footer Actions */}
+            <Card.Footer className="bg-white p-4">
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <FaEnvelope className="me-2 text-muted" />
+                  Confirmation sent to: {customer.email}
+                </div>
+                <div className="d-flex gap-2">
+                  <Button 
+                    variant="outline-secondary" 
+                    onClick={() => navigate('/')}
+                  >
+                    <FaHome className="me-1" /> Home
+                  </Button>
+                  <Button 
+                    variant="warning" 
+                    onClick={() => navigate('/menu')}
+                  >
+                    Order Again
+                  </Button>
+                </div>
+              </div>
+            </Card.Footer>
+          </Card>
+
+          {/* Additional Information */}
+          <Card className="mt-4 border-0 bg-light">
+            <Card.Body>
+              <h5 className="mb-3">Need Help?</h5>
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <FaPhoneAlt className="me-2 text-warning" />
+                  Customer Support: 0121 234 5678
+                </div>
+                <Button variant="outline-warning">
+                  Contact Support
                 </Button>
-              )}
-            </div>
-            
-            <div className="mt-4 text-muted small">
-              Need help with your order? Contact us at <b>0121 XXX XXXX</b>
-            </div>
+              </div>
+            </Card.Body>
           </Card>
         </Col>
       </Row>

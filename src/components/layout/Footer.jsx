@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -34,6 +35,11 @@ const Footer = () => {
                 <a href="#" className="text-warning mx-2"><i className="bi bi-youtube fs-4"></i></a>
               </div>
               <p className="mb-0">TurkNazz &copy; 2025 - All Rights Reserved</p>
+              <div className="mt-3">
+                <Link to="/login" className="text-warning text-decoration-none">
+                  Manage Restaurant
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -44,7 +50,6 @@ const Footer = () => {
           <i className="bi bi-arrow-up"></i>
         </button>
       </div>
-
     </>
   );
 };
