@@ -39,6 +39,7 @@ import AdminNotifications from './components/dashboard/AdminNotifications';
 import AdminLayout from './components/layout/AdminLayout';
 import PaymentSuccessPage from './components/ordering/PaymentSuccessPage';
 import PaymentCancelPage from './components/ordering/PaymentCancelPage';
+import TableManagement from './components/dashboard/TableManagement';
 
 const PrivateRoute = ({ children, allowedRoles = [] }) => {
   const token = localStorage.getItem('token');
@@ -113,6 +114,11 @@ function App() {
                 <Route path="/admin/menu" element={
                   <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
                     <MenuEditor />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/table" element={
+                  <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
+                    <TableManagement />
                   </PrivateRoute>
                 } />
                 <Route path="/admin/orders" element={

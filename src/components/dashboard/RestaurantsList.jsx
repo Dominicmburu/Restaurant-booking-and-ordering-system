@@ -1,105 +1,130 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Edit, Trash, Eye, MapPin, MoreVertical, Check, X } from 'lucide-react';
+import { Search, Filter, Edit, Trash, Eye, MapPin, MoreVertical, Check, X, Clock, Phone, Mail, Users } from 'lucide-react';
+import axios from 'axios';
 import AdminLayout from '../layout/AdminLayout';
 
 const RestaurantsList = () => {
-  const [restaurants, setRestaurants] = useState([
-    { 
-      id: 1, 
-      name: 'Burger House', 
-      logo: '/images/restaurant-logos/burger-house.png',
-      cuisine: 'Fast Food', 
-      address: 'Camden, London', 
-      commissionRate: 10,
-      status: 'active',
-      tables: 12,
-      rating: 4.5
-    },
-    { 
-      id: 2, 
-      name: 'Sushiteria', 
-      logo: '/images/restaurant-logos/sushiteria.png',
-      cuisine: 'Asian', 
-      address: 'Soho, London', 
-      commissionRate: 12,
-      status: 'active',
-      tables: 8,
-      rating: 4.8
-    },
-    { 
-      id: 3, 
-      name: 'Happy Grill', 
-      logo: '/images/restaurant-logos/happy-grill.png',
-      cuisine: 'BBQ', 
-      address: 'Shoreditch, London', 
-      commissionRate: 11,
-      status: 'pending',
-      tables: 15,
-      rating: 4.2
-    },
-    { 
-      id: 4, 
-      name: 'Pasta Paradise', 
-      logo: '/images/restaurant-logos/pasta-paradise.png',
-      cuisine: 'Italian', 
-      address: 'Covent Garden, London', 
-      commissionRate: 10,
-      status: 'inactive',
-      tables: 20,
-      rating: 4.4
-    }
-  ]);
+  const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
   // Filters
   const [filters, setFilters] = useState({
     search: '',
-    cuisine: 'all',
+    city: 'all',
     status: 'all'
   });
+
+  // Fetch restaurants on component mount
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
+
+  // Fetch all restaurants from API
+  const fetchRestaurants = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/restaurants', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.data.success) {
+        setRestaurants(response.data.data);
+      } else {
+        setError('Failed to load restaurants');
+      }
+    } catch (err) {
+      console.error('Error fetching restaurants:', err);
+      
+      if (err.response && err.response.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
+      
+      setError('Failed to load restaurants. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get unique cities for filter dropdown
+  const cities = ['all', ...new Set(restaurants.map(restaurant => restaurant.city))];
 
   // Filter restaurants based on search and filters
   const filteredRestaurants = restaurants.filter(restaurant => {
     // Search filter
-    const matchesSearch = restaurant.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-                          restaurant.cuisine.toLowerCase().includes(filters.search.toLowerCase()) ||
-                          restaurant.address.toLowerCase().includes(filters.search.toLowerCase());
+    const matchesSearch = 
+      restaurant.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+      restaurant.address.toLowerCase().includes(filters.search.toLowerCase()) ||
+      restaurant.city.toLowerCase().includes(filters.search.toLowerCase()) ||
+      restaurant.postcode.toLowerCase().includes(filters.search.toLowerCase());
     
-    // Cuisine filter
-    const matchesCuisine = filters.cuisine === 'all' || restaurant.cuisine === filters.cuisine;
+    // City filter
+    const matchesCity = filters.city === 'all' || restaurant.city === filters.city;
     
-    // Status filter
-    const matchesStatus = filters.status === 'all' || restaurant.status === filters.status;
-    
-    return matchesSearch && matchesCuisine && matchesStatus;
+    return matchesSearch && matchesCity;
   });
 
-  // Function to handle restaurant deletion
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this restaurant?')) {
-      setRestaurants(restaurants.filter(restaurant => restaurant.id !== id));
+  // Function to view restaurant details
+  const handleViewDetails = (restaurant) => {
+    setSelectedRestaurant(restaurant);
+  };
+
+  // Function to close the details modal
+  const handleCloseDetails = () => {
+    setSelectedRestaurant(null);
+  };
+
+  // Function to format time (e.g., "11:00" to "11:00 AM")
+  const formatTime = (time) => {
+    if (!time) return '';
+    
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours, 10);
+    
+    if (hour < 12) {
+      return `${time} AM`;
+    } else if (hour === 12) {
+      return `${time} PM`;
+    } else {
+      return `${hour - 12}:${minutes} PM`;
     }
   };
 
-  // Function to handle status change
-  const handleStatusChange = (id, newStatus) => {
-    setRestaurants(restaurants.map(restaurant => 
-      restaurant.id === id ? {...restaurant, status: newStatus} : restaurant
-    ));
-  };
+  if (loading) {
+    return (
+      <AdminLayout title="Restaurants Management">
+        <div className="container-fluid p-4 text-center">
+          <div className="spinner-border text-warning mt-5" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-3">Loading restaurants...</p>
+        </div>
+      </AdminLayout>
+    );
+  }
 
-  // Bootstrap status badge styling
-  const getStatusBadgeClass = (status) => {
-    switch(status) {
-      case 'active': 
-        return 'bg-success';
-      case 'pending': 
-        return 'bg-primary';
-      case 'inactive': 
-        return 'bg-danger';
-      default: 
-        return 'bg-secondary';
-    }
-  };
+  if (error) {
+    return (
+      <AdminLayout title="Restaurants Management">
+        <div className="container-fluid p-4">
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+          <button 
+            onClick={fetchRestaurants} 
+            className="btn btn-warning"
+          >
+            Try Again
+          </button>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout title="Restaurants Management">
@@ -115,11 +140,11 @@ const RestaurantsList = () => {
         <div className="card mb-4">
           <div className="card-body">
             <div className="row g-3">
-              <div className="col-md-6">
+              <div className="col-md-8">
                 <div className="position-relative">
                   <input
                     type="text"
-                    placeholder="Search restaurants..."
+                    placeholder="Search restaurants by name, address, or postcode..."
                     className="form-control ps-5"
                     value={filters.search}
                     onChange={(e) => setFilters({...filters, search: e.target.value})}
@@ -130,32 +155,35 @@ const RestaurantsList = () => {
                 </div>
               </div>
               
-              <div className="col-md-3">
+              <div className="col-md-4">
                 <select 
                   className="form-select"
-                  value={filters.cuisine}
-                  onChange={(e) => setFilters({...filters, cuisine: e.target.value})}
+                  value={filters.city}
+                  onChange={(e) => setFilters({...filters, city: e.target.value})}
                 >
-                  <option value="all">All Cuisines</option>
-                  <option value="Fast Food">Fast Food</option>
-                  <option value="Asian">Asian</option>
-                  <option value="BBQ">BBQ</option>
-                  <option value="Italian">Italian</option>
+                  <option value="all">All Cities</option>
+                  {cities.filter(city => city !== 'all').map(city => (
+                    <option key={city} value={city}>{city}</option>
+                  ))}
                 </select>
               </div>
-              
-              <div className="col-md-3">
-                <select 
-                  className="form-select"
-                  value={filters.status}
-                  onChange={(e) => setFilters({...filters, status: e.target.value})}
-                >
-                  <option value="all">All Status</option>
-                  <option value="active">Active</option>
-                  <option value="pending">Pending</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Restaurant count summary */}
+        <div className="alert alert-light mb-4">
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <strong>Total Restaurants:</strong> {restaurants.length}
+            </div>
+            <div>
+              <button 
+                onClick={fetchRestaurants} 
+                className="btn btn-sm btn-outline-secondary"
+              >
+                Refresh Data
+              </button>
             </div>
           </div>
         </div>
@@ -168,109 +196,232 @@ const RestaurantsList = () => {
                 <thead className="table-light">
                   <tr>
                     <th>Restaurant</th>
-                    <th>Cuisine</th>
                     <th>Location</th>
-                    <th>Commission</th>
-                    <th>Status</th>
+                    <th>Contact</th>
+                    <th>Hours</th>
+                    <th>Capacity</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredRestaurants.map(restaurant => (
-                    <tr key={restaurant.id}>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <img 
-                            className="rounded-circle me-3" 
-                            src="/api/placeholder/48/48" 
-                            alt={restaurant.name}
-                            width="40"
-                            height="40"
-                          />
-                          <div>
-                            <div className="fw-medium">{restaurant.name}</div>
-                            <small className="text-muted">
-                              {restaurant.tables} tables · {restaurant.rating} ★
+                  {filteredRestaurants.length > 0 ? (
+                    filteredRestaurants.map(restaurant => (
+                      <tr key={restaurant.id}>
+                        <td>
+                          <div className="d-flex align-items-center">
+                            <div className="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                              style={{ width: '40px', height: '40px', fontSize: '18px' }}>
+                              {restaurant.name.charAt(0)}
+                            </div>
+                            <div>
+                              <div className="fw-medium">{restaurant.name}</div>
+                              <small className="text-muted">
+                                ID: {restaurant.id.slice(0, 8)}...
+                              </small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="d-flex align-items-center">
+                            <MapPin size={16} className="me-1 text-warning" />
+                            <div>
+                              <div>{restaurant.address}</div>
+                              <small className="text-muted">{restaurant.city}, {restaurant.postcode}</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="d-flex flex-column">
+                            <small className="d-flex align-items-center mb-1">
+                              <Phone size={14} className="me-1 text-muted" /> {restaurant.phone}
+                            </small>
+                            <small className="d-flex align-items-center">
+                              <Mail size={14} className="me-1 text-muted" /> {restaurant.email}
                             </small>
                           </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span className="badge bg-warning text-dark">
-                          {restaurant.cuisine}
-                        </span>
-                      </td>
-                      <td className="text-muted">
-                        <div className="d-flex align-items-center">
-                          <MapPin size={16} className="me-1" />
-                          {restaurant.address}
-                        </div>
-                      </td>
-                      <td>{restaurant.commissionRate}%</td>
-                      <td>
-                        <span className={`badge ${getStatusBadgeClass(restaurant.status)}`}>
-                          {restaurant.status.charAt(0).toUpperCase() + restaurant.status.slice(1)}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="d-flex gap-2">
-                          <button className="btn btn-sm btn-outline-primary">
-                            <Eye size={18} />
-                          </button>
-                          <button className="btn btn-sm btn-outline-secondary">
-                            <Edit size={18} />
-                          </button>
-                          <button 
-                            className="btn btn-sm btn-outline-danger"
-                            onClick={() => handleDelete(restaurant.id)}
-                          >
-                            <Trash size={18} />
-                          </button>
-                          <div className="dropdown">
+                        </td>
+                        <td>
+                          <div className="d-flex align-items-center">
+                            <Clock size={16} className="me-1 text-warning" />
+                            {formatTime(restaurant.openTime)} - {formatTime(restaurant.closeTime)}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="d-flex align-items-center">
+                            <Users size={16} className="me-1 text-warning" />
+                            {restaurant.maxSeating} seats
+                          </div>
+                        </td>
+                        <td>
+                          <div className="d-flex gap-2">
                             <button 
-                              className="btn btn-sm btn-outline-secondary dropdown-toggle"
-                              type="button"
-                              id={`dropdown-${restaurant.id}`}
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
+                              className="btn btn-sm btn-outline-primary"
+                              onClick={() => handleViewDetails(restaurant)}
                             >
-                              <MoreVertical size={18} />
+                              <Eye size={18} />
                             </button>
-                            <ul className="dropdown-menu" aria-labelledby={`dropdown-${restaurant.id}`}>
-                              {restaurant.status !== 'active' && (
+                            <button className="btn btn-sm btn-outline-secondary">
+                              <Edit size={18} />
+                            </button>
+                            <div className="dropdown">
+                              <button 
+                                className="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                type="button"
+                                id={`dropdown-${restaurant.id}`}
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                              >
+                                <MoreVertical size={18} />
+                              </button>
+                              <ul className="dropdown-menu" aria-labelledby={`dropdown-${restaurant.id}`}>
                                 <li>
-                                  <button 
-                                    onClick={() => handleStatusChange(restaurant.id, 'active')}
-                                    className="dropdown-item d-flex align-items-center"
-                                  >
-                                    <Check size={16} className="me-2 text-success" />
-                                    Activate
-                                  </button>
+                                  <a className="dropdown-item" href={`/admin/restaurants/${restaurant.id}`}>
+                                    View Details
+                                  </a>
                                 </li>
-                              )}
-                              {restaurant.status !== 'inactive' && (
                                 <li>
-                                  <button 
-                                    onClick={() => handleStatusChange(restaurant.id, 'inactive')}
-                                    className="dropdown-item d-flex align-items-center"
-                                  >
-                                    <X size={16} className="me-2 text-danger" />
+                                  <a className="dropdown-item" href={`/admin/restaurants/${restaurant.id}/menu`}>
+                                    Manage Menu
+                                  </a>
+                                </li>
+                                <li>
+                                  <a className="dropdown-item" href={`/admin/restaurants/${restaurant.id}/tables`}>
+                                    Manage Tables
+                                  </a>
+                                </li>
+                                <li><hr className="dropdown-divider" /></li>
+                                <li>
+                                  <button className="dropdown-item text-danger">
                                     Deactivate
                                   </button>
                                 </li>
-                              )}
-                            </ul>
+                              </ul>
+                            </div>
                           </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center py-4">
+                        <div className="text-muted">
+                          <p>No restaurants found matching your search criteria.</p>
+                          {filters.search || filters.city !== 'all' ? (
+                            <button 
+                              className="btn btn-sm btn-outline-secondary" 
+                              onClick={() => setFilters({search: '', city: 'all', status: 'all'})}
+                            >
+                              Clear filters
+                            </button>
+                          ) : null}
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Restaurant Detail Modal */}
+      {selectedRestaurant && (
+        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">{selectedRestaurant.name}</h5>
+                <button type="button" className="btn-close" onClick={handleCloseDetails}></button>
+              </div>
+              <div className="modal-body">
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="mb-4">
+                      <h6 className="text-muted mb-2">Location Information</h6>
+                      <p className="d-flex align-items-start mb-1">
+                        <MapPin size={16} className="me-2 mt-1 text-warning" />
+                        <span>
+                          {selectedRestaurant.address}<br />
+                          {selectedRestaurant.city}, {selectedRestaurant.postcode}
+                        </span>
+                      </p>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <h6 className="text-muted mb-2">Contact Information</h6>
+                      <p className="d-flex align-items-center mb-1">
+                        <Phone size={16} className="me-2 text-warning" />
+                        {selectedRestaurant.phone}
+                      </p>
+                      <p className="d-flex align-items-center mb-1">
+                        <Mail size={16} className="me-2 text-warning" />
+                        {selectedRestaurant.email}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="col-md-6">
+                    <div className="mb-4">
+                      <h6 className="text-muted mb-2">Opening Hours</h6>
+                      <p className="d-flex align-items-center mb-1">
+                        <Clock size={16} className="me-2 text-warning" />
+                        {formatTime(selectedRestaurant.openTime)} - {formatTime(selectedRestaurant.closeTime)}
+                      </p>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <h6 className="text-muted mb-2">Capacity</h6>
+                      <p className="d-flex align-items-center mb-1">
+                        <Users size={16} className="me-2 text-warning" />
+                        {selectedRestaurant.maxSeating} maximum seating capacity
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <hr />
+                
+                <div className="row mt-3">
+                  <div className="col-12">
+                    <h6 className="text-muted mb-3">Quick Actions</h6>
+                    <div className="d-flex flex-wrap gap-2">
+                      <a href={`/admin/restaurants/${selectedRestaurant.id}/menu`} className="btn btn-outline-primary">
+                        Manage Menu
+                      </a>
+                      <a href={`/admin/restaurants/${selectedRestaurant.id}/tables`} className="btn btn-outline-primary">
+                        Manage Tables
+                      </a>
+                      <a href={`/admin/restaurants/${selectedRestaurant.id}/staff`} className="btn btn-outline-primary">
+                        Manage Staff
+                      </a>
+                      <a href={`/admin/restaurants/${selectedRestaurant.id}/edit`} className="btn btn-outline-secondary">
+                        Edit Restaurant
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="row mt-4">
+                  <div className="col-12">
+                    <div className="alert alert-warning">
+                      <h6 className="alert-heading">Restaurant Details</h6>
+                      <p className="mb-0 small">
+                        This restaurant was created on {new Date(selectedRestaurant.createdAt).toLocaleDateString()} 
+                        and last updated on {new Date(selectedRestaurant.updatedAt).toLocaleDateString()}.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={handleCloseDetails}>Close</button>
+              </div>
+            </div>
+          </div>
+          <div className="modal-backdrop fade show"></div>
+        </div>
+      )}
     </AdminLayout>
   );
 };

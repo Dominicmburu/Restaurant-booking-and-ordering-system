@@ -19,7 +19,6 @@ const BookingPage = () => {
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [bookingDetails, setBookingDetails] = useState({});
 
-  // Fetch restaurants on component mount
   useEffect(() => {
     axios.get('http://localhost:5000/api/restaurants')
       .then(response => {

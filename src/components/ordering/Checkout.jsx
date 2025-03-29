@@ -20,7 +20,7 @@ const CheckoutPage = () => {
     addressDetails: '',
     city: 'Birmingham',
     postcode: '',
-    paymentMethod: 'card', // default to card
+    paymentMethod: 'card',
     deliveryTime: 'asap',
     scheduledTime: '',
     notes: '',
