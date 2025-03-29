@@ -2,18 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { 
   Menu, X, Home, Users, ShoppingBag, 
   Calendar, Settings, HelpCircle, LogOut,
-  Bell, Search, User, ChevronDown
+  Bell, Search, User, ChevronDown,
+  Table2Icon
 } from 'lucide-react';
 import { Car } from 'lucide-react';
 import { MenuIcon } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AdminLayout = ({ children, title }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [userData, setUserData] = useState({ name: 'Admin User' });
+  const [loading, setLoading] = useState(true);
   
   const location = useLocation ? useLocation() : { pathname: window.location.pathname };
+  const navigate = useNavigate ? useNavigate() : null;
   const currentPath = location.pathname;
   
   useEffect(() => {
@@ -33,6 +38,84 @@ const AdminLayout = ({ children, title }) => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+  
+  // Fetch user data on component mount
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          // Redirect to login if no token
+          if (navigate) {
+            navigate('/login');
+          } else {
+            window.location.href = '/login';
+          }
+          return;
+        }
+
+        const response = await axios.get('http://localhost:5000/api/auth/me', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        if (response.data.success) {
+          setUserData(response.data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user data:', error);
+        // Handle unauthorized access
+        if (error.response && error.response.status === 401) {
+          if (navigate) {
+            navigate('/login');
+          } else {
+            window.location.href = '/login';
+          }
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchUserData();
+  }, [navigate]);
+  
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Call logout API
+      await axios.get('http://localhost:5000/api/auth/logout', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      // Clear local storage
+      localStorage.removeItem('token');
+      localStorage.removeItem('userInfo');
+      
+      // Redirect to login page
+      if (navigate) {
+        navigate('/login');
+      } else {
+        window.location.href = '/login';
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+      
+      // Force logout on client side even if API fails
+      localStorage.removeItem('token');
+      localStorage.removeItem('userInfo');
+      
+      if (navigate) {
+        navigate('/login');
+      } else {
+        window.location.href = '/login';
+      }
+    }
+  };
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -69,11 +152,12 @@ const AdminLayout = ({ children, title }) => {
   const navItems = [
     { icon: Home, label: 'Dashboard', href: '/admin/dashboard' },
     // { icon: Users, label: 'Restaurants', href: '/admin/restaurants' },
-    // { icon: Users, label: 'Restaurants List', href: '/admin/restaurants/list' },
+    { icon: Users, label: 'Restaurants', href: '/admin/restaurants/list' },
     { icon: MenuIcon, label: 'Menu', href: '/admin/menu' },
+    { icon: Table2Icon, label: 'Table', href: '/admin/table' },
     { icon: ShoppingBag, label: 'Orders', href: '/admin/orders' },
     { icon: Calendar, label: 'Bookings', href: '/admin/bookings' },
-    { icon: Car, label: 'Delivery', href: '/admin/delivery' },
+    // { icon: Car, label: 'Delivery', href: '/admin/delivery' },
     { icon: User, label: 'Users', href: '/admin/users' },
     // { icon: HelpCircle, label: 'Support', href: '/admin/support' },
   ];
@@ -84,6 +168,18 @@ const AdminLayout = ({ children, title }) => {
     { id: 2, text: 'Order #1089 has been cancelled', time: '22 minutes ago' },
     { id: 3, text: 'Booking conflict detected', time: '1 hour ago' },
   ];
+
+  // Get user initials for avatar
+  const getUserInitials = () => {
+    if (userData.name) {
+      const nameParts = userData.name.split(' ');
+      if (nameParts.length > 1) {
+        return `${nameParts[0].charAt(0)}${nameParts[1].charAt(0)}`;
+      }
+      return userData.name.charAt(0);
+    }
+    return 'U';
+  };
 
   return (
     <div className="d-flex vh-100">
@@ -109,9 +205,9 @@ const AdminLayout = ({ children, title }) => {
         <div className="d-flex align-items-center justify-content-between p-3 border-bottom">
           <div className="d-flex align-items-center">
             <div className="bg-warning rounded-circle d-flex align-items-center justify-content-center" style={{ width: '32px', height: '32px' }}>
-              <span className="text-white fw-bold">A</span>
+              <span className="text-white fw-bold">T</span>
             </div>
-            <h1 className="ms-2 fs-5 fw-bold mb-0">AlDiner</h1>
+            <h1 className="ms-2 fs-5 fw-bold mb-0">TurkNuzz</h1>
           </div>
           <button onClick={toggleSidebar} className="btn btn-sm border-0 d-md-none">
             <X size={24} />
@@ -152,13 +248,13 @@ const AdminLayout = ({ children, title }) => {
           </nav>
         </div>
         <div className="position-absolute bottom-0 w-100 border-top p-3 bg-white">
-          <a 
-            href="/admin/logout" 
-            className="d-flex align-items-center px-3 py-2 text-secondary text-decoration-none rounded"
+          <button 
+            onClick={handleLogout}
+            className="d-flex align-items-center px-3 py-2 text-secondary text-decoration-none rounded border-0 bg-transparent w-100 text-start"
           >
             <LogOut size={20} className="me-2" />
             <span>Logout</span>
-          </a>
+          </button>
         </div>
       </div>
 
@@ -247,10 +343,16 @@ const AdminLayout = ({ children, title }) => {
                   }}
                   aria-label="User menu"
                 >
-                  <div className="bg-secondary bg-opacity-25 rounded-circle overflow-hidden" style={{ width: '32px', height: '32px' }}>
-                    <User size={24} className="w-100 h-100 p-1" />
+                  <div className="bg-secondary bg-opacity-25 rounded-circle overflow-hidden d-flex align-items-center justify-content-center" style={{ width: '32px', height: '32px' }}>
+                    {loading ? (
+                      <div className="spinner-border spinner-border-sm text-secondary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    ) : (
+                      <span className="text-secondary fw-semibold">{getUserInitials()}</span>
+                    )}
                   </div>
-                  <span className="d-none d-md-block ms-2">Admin User</span>
+                  <span className="d-none d-md-block ms-2">{loading ? 'Loading...' : userData.name}</span>
                   <ChevronDown size={16} className="ms-1" />
                 </button>
                 
@@ -268,9 +370,9 @@ const AdminLayout = ({ children, title }) => {
                       Settings
                     </a>
                     <div className="dropdown-divider"></div>
-                    <a href="/admin/logout" className="dropdown-item">
+                    <button onClick={handleLogout} className="dropdown-item">
                       Sign out
-                    </a>
+                    </button>
                   </div>
                 )}
               </div>

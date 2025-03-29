@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '../layout/AdminLayout';
 import { Camera, Mail, Phone, MapPin, Lock, Check, X } from 'lucide-react';
+import axios from 'axios';
 
 const AdminProfile = () => {
   const [profileData, setProfileData] = useState({
-    firstName: 'Admin',
-    lastName: 'User',
-    email: 'admin@aldiner.com',
-    phone: '+44 7700 123456',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
     address: '123 Admin Street, London',
-    role: 'System Administrator',
-    joined: 'January 15, 2023',
+    role: '',
+    joined: '',
     lastActive: 'Today at 10:45 AM'
   });
 
@@ -20,6 +21,7 @@ const AdminProfile = () => {
     confirmPassword: ''
   });
 
+  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState({...profileData});
   
@@ -27,21 +29,115 @@ const AdminProfile = () => {
   const [passwordSuccess, setPasswordSuccess] = useState('');
   
   const [profileSuccess, setProfileSuccess] = useState('');
+  const [profileError, setProfileError] = useState('');
+
+  // Set up axios config with auth token
+  const apiConfig = {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+  };
+
+  // Fetch user profile on component mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('http://localhost:5000/api/auth/me', apiConfig);
+        
+        if (response.data.success) {
+          const userData = response.data.data;
+          // Split name into first and last name
+          const nameParts = userData.name.split(' ');
+          const firstName = nameParts[0] || '';
+          const lastName = nameParts.slice(1).join(' ') || '';
+          
+          // Format joined date
+          const joinedDate = new Date(userData.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          
+          setProfileData({
+            firstName,
+            lastName,
+            email: userData.email,
+            phone: userData.phone || '',
+            address: '123 Admin Street, London', // Placeholder since address isn't in API
+            role: userData.role,
+            joined: joinedDate,
+            lastActive: 'Today at 10:45 AM'
+          });
+          
+          setEditedProfile({
+            firstName,
+            lastName,
+            email: userData.email,
+            phone: userData.phone || '',
+            address: '123 Admin Street, London'
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch profile:', error);
+        setProfileError('Failed to load profile data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProfile();
+  }, []);
 
   const handleProfileEdit = () => {
     setEditing(true);
     setEditedProfile({...profileData});
   };
 
-  const handleProfileSave = () => {
-    setProfileData({...editedProfile});
-    setEditing(false);
-    setProfileSuccess('Profile updated successfully!');
-    
-    // Clear success message after 3 seconds
-    setTimeout(() => {
-      setProfileSuccess('');
-    }, 3000);
+  const handleProfileSave = async () => {
+    try {
+      // Prepare data for API
+      const updateData = {
+        name: `${editedProfile.firstName} ${editedProfile.lastName}`.trim(),
+        phone: editedProfile.phone
+        // Note: We're not sending address as it's not in your API schema
+      };
+      
+      // Get user ID from localStorage or from the profile data
+      const userId = JSON.parse(localStorage.getItem('userInfo') || '{}').id;
+      
+      // Make API call to update user
+      const response = await axios.put(
+        `http://localhost:5000/api/users/${userId}`,
+        updateData,
+        apiConfig
+      );
+      
+      if (response.data.success) {
+        // Update local state with edited values
+        setProfileData({
+          ...profileData,
+          firstName: editedProfile.firstName,
+          lastName: editedProfile.lastName,
+          phone: editedProfile.phone,
+          address: editedProfile.address
+        });
+        
+        setEditing(false);
+        setProfileSuccess('Profile updated successfully!');
+        setProfileError('');
+        
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setProfileSuccess('');
+        }, 3000);
+      } else {
+        setProfileError('Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setProfileError('An error occurred while updating profile');
+    }
   };
 
   const handleProfileCancel = () => {
@@ -59,7 +155,7 @@ const AdminProfile = () => {
     setPasswordSuccess('');
   };
 
-  const handlePasswordSubmit = (e) => {
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     
     // Basic validation
@@ -78,20 +174,53 @@ const AdminProfile = () => {
       return;
     }
     
-    // Success scenario
-    setPasswordSuccess('Password updated successfully!');
-    setPasswordError('');
-    setPasswordData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    });
-    
-    // Clear success message after 3 seconds
-    setTimeout(() => {
-      setPasswordSuccess('');
-    }, 3000);
+    try {
+      // Make API call to update password
+      const response = await axios.post(
+        'http://localhost:5000/api/users/updatepassword',
+        {
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        },
+        apiConfig
+      );
+      
+      if (response.data.success) {
+        // Success scenario
+        setPasswordSuccess('Password updated successfully!');
+        setPasswordError('');
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+        
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setPasswordSuccess('');
+        }, 3000);
+      } else {
+        setPasswordError(response.data.message || 'Failed to update password');
+      }
+    } catch (error) {
+      console.error('Error updating password:', error);
+      setPasswordError(error.response?.data?.message || 'An error occurred while updating password');
+    }
   };
+
+  if (loading) {
+    return (
+      <AdminLayout title="My Profile">
+        <div className="container-fluid p-4">
+          <div className="d-flex justify-content-center">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout title="My Profile">
@@ -129,6 +258,13 @@ const AdminProfile = () => {
                 </div>
               </div>
               <div className="card-body">
+                {profileError && (
+                  <div className="alert alert-danger d-flex align-items-center" role="alert">
+                    <X size={18} className="me-2" />
+                    <div>{profileError}</div>
+                  </div>
+                )}
+                
                 {profileSuccess && (
                   <div className="alert alert-success d-flex align-items-center" role="alert">
                     <Check size={18} className="me-2" />
@@ -184,7 +320,9 @@ const AdminProfile = () => {
                         className="form-control" 
                         value={editedProfile.email}
                         onChange={(e) => setEditedProfile({...editedProfile, email: e.target.value})}
+                        disabled
                       />
+                      <div className="form-text">Email cannot be changed</div>
                     </div>
                     <div className="col-md-6">
                       <label className="form-label">Phone</label>

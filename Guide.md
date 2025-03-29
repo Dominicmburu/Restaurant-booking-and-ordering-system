@@ -46,3 +46,5 @@
 // │   └── styles/
 // ├── App.jsx
 // └── index.jsx
+
+https://claude.ai/chat/5a7b628a-cbee-44ee-8207-f0cab4992f04

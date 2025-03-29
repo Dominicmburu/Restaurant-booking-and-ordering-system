@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { BookingProvider } from './contexts/BookingContext';
 import { OrderProvider } from './contexts/OrderContext';
@@ -37,12 +37,29 @@ import AdminProfile from './components/dashboard/AdminProfile';
 import AdminSettings from './components/dashboard/AdminSettings';
 import AdminNotifications from './components/dashboard/AdminNotifications';
 import AdminLayout from './components/layout/AdminLayout';
+import PaymentSuccessPage from './components/ordering/PaymentSuccessPage';
+import PaymentCancelPage from './components/ordering/PaymentCancelPage';
+import TableManagement from './components/dashboard/TableManagement';
 
+const PrivateRoute = ({ children, allowedRoles = [] }) => {
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+  
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" />;
+  }
+  
+  return children;
+};
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
-  
+
   return (
     <>
       {!isAdminRoute && <Header />}
@@ -60,8 +77,7 @@ function App() {
           <Router>
             <main>
               <Routes>
-
-                {/* user */}
+                {/* Public routes */}
                 <Route path="/" element={<AppLayout><Home /></AppLayout>} />
                 <Route path="/menu" element={<AppLayout><Menu /></AppLayout>} />
                 <Route path="/booking" element={<AppLayout><BookingPage /></AppLayout>} />
@@ -76,20 +92,72 @@ function App() {
                 <Route path="/login" element={<AppLayout><Login /></AppLayout>} />
                 <Route path="/register" element={<AppLayout><Register /></AppLayout>} />
                 <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
+                <Route path="/payment-success" element={<PaymentSuccessPage />} />
+                <Route path="/payment-cancel" element={<PaymentCancelPage />} />
 
-                {/* // admin */}
-                <Route path="/admin/dashboard" element={<Dashboard />} />
-                <Route path="/admin/restaurants" element={<RestaurantProf />} />
-                <Route path="/admin/restaurants/list" element={<RestaurantsList />} />
-                <Route path="/admin/menu" element={<MenuEditor />} />
-                <Route path="/admin/orders" element={<OrdersList />} />
-                <Route path="/admin/bookings" element={<BookingsList />} />
-                <Route path="/admin/delivery" element={<DeliveryManagement />} />
-                <Route path="/admin/users" element={<UsersManagement />} />
-                <Route path="/admin/profile" element={<AdminProfile />} />
-                <Route path="/admin/settings" element={<AdminSettings />} />
-                <Route path="/admin/notifications" element={<AdminNotifications />} />
+                {/* Protected admin routes */}
+                <Route path="/admin/dashboard" element={
+                  <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
+                    <Dashboard />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/restaurants" element={
+                  <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
+                    <RestaurantProf />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/restaurants/list" element={
+                  <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
+                    <RestaurantsList />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/menu" element={
+                  <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
+                    <MenuEditor />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/table" element={
+                  <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
+                    <TableManagement />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/orders" element={
+                  <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
+                    <OrdersList />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/bookings" element={
+                  <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
+                    <BookingsList />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/delivery" element={
+                  <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
+                    <DeliveryManagement />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/users" element={
+                  <PrivateRoute allowedRoles={['ADMIN']}>
+                    <UsersManagement />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/profile" element={
+                  <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
+                    <AdminProfile />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/settings" element={
+                  <PrivateRoute allowedRoles={['ADMIN']}>
+                    <AdminSettings />
+                  </PrivateRoute>
+                } />
+                <Route path="/admin/notifications" element={
+                  <PrivateRoute allowedRoles={['ADMIN', 'MANAGER']}>
+                    <AdminNotifications />
+                  </PrivateRoute>
+                } />
 
+                <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </main>
           </Router>

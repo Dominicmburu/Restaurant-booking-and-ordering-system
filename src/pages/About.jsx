@@ -8,7 +8,7 @@ const About = () => {
             <Container>
                 {/* Page Title */}
                 <div className="text-center mb-5">
-                    <h1 className="display-4 fw-bold text-warning">About AlDiner</h1>
+                    <h1 className="display-4 fw-bold text-warning">About TurkNazz</h1>
                     <p className="lead text-muted">London’s Favorite Food Delivery Platform</p>
                 </div>
 
@@ -24,7 +24,7 @@ const About = () => {
                     <Col md={6}>
                         <h2 className="fw-bold">Our Story</h2>
                         <p className="text-muted">
-                            AlDiner was founded with one goal: bringing the best of London's restaurants to your doorstep. 
+                            TurkNazz was founded with one goal: bringing the best of London's restaurants to your doorstep. 
                             From gourmet dining to quick bites, we connect food lovers with their favorite eateries.
                         </p>
                     </Col>

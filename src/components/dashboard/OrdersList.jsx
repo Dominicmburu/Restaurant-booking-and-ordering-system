@@ -1,152 +1,147 @@
-import React, { useState } from 'react';
-// import { 
-//   Search, 
-//   Eye, 
-//   Truck, 
-//   Check, 
-//   X, 
-//   Clock, 
-//   ExclamationCircle, 
-//   Calendar3, 
-//   Download, 
-//   ChevronLeft, 
-//   ChevronRight 
-// } from 'react-bootstrap-icons';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Table, Badge, Dropdown } from 'react-bootstrap';
 import AdminLayout from '../layout/AdminLayout';
-import { Download } from 'lucide-react';
-import { Search } from 'lucide-react';
-import { Eye } from 'lucide-react';
-import { Clock } from 'lucide-react';
-import { X } from 'lucide-react';
+import { 
+  Download, Search, Eye, Clock, X, Filter, ChevronLeft, ChevronRight,
+  Truck, MapPin, ShoppingBag, DollarSign, Calendar, AlertCircle, RefreshCw,
+  MessageCircle, Utensils
+} from 'lucide-react';
+import axios from 'axios';
 
 const OrdersList = () => {
-  // Sample orders data
-  const [orders, setOrders] = useState([
-    {
-      id: 'ORD-2024-001',
-      customer: 'John Doe',
-      restaurant: 'Burger House',
-      address: '45 Oxford St, London W1D 2DZ',
-      items: [
-        { name: 'Margherita Pizza', quantity: 1, price: 14.99 },
-        { name: 'Chocolate Lava Cake', quantity: 2, price: 7.99 },
-        { name: 'Soft Drinks', quantity: 4, price: 2.99 }
-      ],
-      total: 43.96,
-      date: '2024-03-14T19:45:00',
-      status: 'delivered',
-      paymentMethod: 'Credit Card',
-      type: 'delivery',
-      driver: 'David Williams'
-    },
-    {
-      id: 'ORD-2024-002',
-      customer: 'Jane Smith',
-      restaurant: 'Burger House',
-      address: '22 Baker St, London NW1 5RT',
-      items: [
-        { name: 'Classic Bacon Hamburger', quantity: 1, price: 11.99 },
-        { name: 'Garlic Bread', quantity: 1, price: 5.99 },
-        { name: 'House Wine', quantity: 2, price: 6.99 }
-      ],
-      total: 31.97,
-      date: '2024-03-14T18:30:00',
-      status: 'preparing',
-      paymentMethod: 'Cash',
-      type: 'delivery',
-      driver: null
-    },
-    {
-      id: 'ORD-2024-003',
-      customer: 'Robert Johnson',
-      restaurant: 'Sushiteria',
-      items: [
-        { name: 'Sushi Platter', quantity: 1, price: 24.99 },
-        { name: 'Miso Soup', quantity: 2, price: 3.99 },
-        { name: 'Green Tea', quantity: 2, price: 2.50 }
-      ],
-      total: 37.97,
-      date: '2024-03-14T17:15:00',
-      status: 'in_transit',
-      paymentMethod: 'Credit Card',
-      type: 'delivery',
-      driver: 'Maria Garcia'
-    },
-    {
-      id: 'ORD-2024-004',
-      customer: 'Emily Chen',
-      restaurant: 'Happy Grill',
-      items: [
-        { name: 'Grilled Steak', quantity: 2, price: 18.99 },
-        { name: 'Fries', quantity: 1, price: 4.99 },
-        { name: 'Cola', quantity: 2, price: 2.49 }
-      ],
-      total: 47.95,
-      date: '2024-03-14T16:00:00',
-      status: 'ready',
-      paymentMethod: 'Credit Card',
-      type: 'pickup',
-      driver: null
-    },
-    {
-      id: 'ORD-2024-005',
-      customer: 'Michael Brown',
-      restaurant: 'Pasta Paradise',
-      address: '78 Camden High St, London NW1 0LT',
-      items: [
-        { name: 'Spaghetti Carbonara', quantity: 1, price: 13.99 },
-        { name: 'Garlic Bread', quantity: 1, price: 5.99 },
-        { name: 'Tiramisu', quantity: 1, price: 8.99 }
-      ],
-      total: 28.97,
-      date: '2024-03-14T12:45:00',
-      status: 'cancelled',
-      paymentMethod: 'Credit Card',
-      type: 'delivery',
-      driver: null
-    }
-  ]);
-
-  // Sample drivers data
-  const drivers = [
-    { id: 1, name: 'David Williams', status: 'available' },
-    { id: 2, name: 'Maria Garcia', status: 'busy' },
-    { id: 3, name: 'James Wilson', status: 'available' },
-    { id: 4, name: 'Sarah Martinez', status: 'available' }
-  ];
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
 
   // Filters
   const [filters, setFilters] = useState({
     search: '',
     status: 'all',
     type: 'all',
-    date: ''
+    date: '',
+    restaurant: 'all'
   });
+
+  // Unique restaurants extracted from orders
+  const [restaurants, setRestaurants] = useState([]);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [historyPage, setHistoryPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Order details modal state
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  // Function to handle order assignment to driver
-  const handleAssignDriver = (orderId, driverId) => {
-    const driverName = drivers.find(driver => driver.id === driverId)?.name || '';
-    
-    setOrders(orders.map(order => 
-      order.id === orderId ? {...order, driver: driverName, status: 'in_transit'} : order
-    ));
+  // Status mapping based on the OrderStatus enum
+  const ORDER_STATUSES = ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'DELIVERING', 'DELIVERED', 'COMPLETED', 'CANCELLED'];
+  const ORDER_TYPES = ['DELIVERY', 'PICKUP'];
+
+  // Fetch orders on component mount
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  // Update restaurants list when orders change
+  useEffect(() => {
+    if (orders.length > 0) {
+      const uniqueRestaurants = [...new Set(orders.map(order => order.restaurant?.id))]
+        .filter(id => id)
+        .map(id => {
+          const restaurant = orders.find(order => order.restaurant?.id === id)?.restaurant;
+          return restaurant;
+        });
+      setRestaurants(uniqueRestaurants);
+    }
+  }, [orders]);
+
+  // Fetch all orders from API
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/orders', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.data.success) {
+        setOrders(response.data.data);
+        setError(null);
+      } else {
+        setError('Failed to load orders');
+      }
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+      
+      if (err.response && err.response.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
+      
+      setError('Failed to load orders. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Function to handle status update
-  const handleStatusUpdate = (orderId, newStatus) => {
-    setOrders(orders.map(order => 
-      order.id === orderId ? {...order, status: newStatus} : order
-    ));
+  // Fetch single order details
+  const fetchOrderDetails = async (orderId) => {
+    setLoadingDetails(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:5000/api/orders/${orderId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.data.success) {
+        setOrderDetails(response.data.data);
+      } else {
+        alert('Failed to load order details');
+      }
+    } catch (err) {
+      console.error('Error fetching order details:', err);
+      alert('Error loading order details. Please try again.');
+    } finally {
+      setLoadingDetails(false);
+    }
+  };
+
+  // Update order status
+  const handleStatusUpdate = async (orderId, newStatus) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`http://localhost:5000/api/orders/${orderId}/status`, {
+        status: newStatus
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.data.success) {
+        // Update the order in state
+        setOrders(orders.map(order => 
+          order.id === orderId ? { ...order, status: newStatus } : order
+        ));
+        
+        // If the order is selected, update its status too
+        if (selectedOrder && selectedOrder.id === orderId) {
+          setSelectedOrder({ ...selectedOrder, status: newStatus });
+        }
+      } else {
+        alert('Failed to update order status');
+      }
+    } catch (err) {
+      console.error('Error updating order status:', err);
+      alert('Error updating order status. Please try again.');
+    }
   };
 
   // Function to view order details
@@ -154,43 +149,77 @@ const OrdersList = () => {
     const order = orders.find(order => order.id === orderId);
     setSelectedOrder(order);
     setShowDetails(true);
+    fetchOrderDetails(orderId);
   };
 
   // Function to close order details modal
   const handleCloseDetails = () => {
     setShowDetails(false);
     setSelectedOrder(null);
+    setOrderDetails(null);
   };
 
   // Function to export orders as CSV
   const handleExportOrders = () => {
-    // In a real app, this would generate and download a CSV file
-    alert('Exporting orders to CSV...');
+    // Create CSV content
+    let csvContent = "data:text/csv;charset=utf-8,";
+    
+    // Add headers
+    csvContent += "Order ID,Customer,Restaurant,Date,Total,Type,Status,Payment Method\n";
+    
+    // Add data rows
+    filteredOrders.forEach(order => {
+      const row = [
+        order.orderNumber,
+        order.customer?.name || "Guest",
+        order.restaurant?.name,
+        formatDate(order.createdAt),
+        `£${parseFloat(order.total).toFixed(2)}`,
+        order.orderType,
+        order.status,
+        order.paymentMethod
+      ];
+      
+      csvContent += row.join(",") + "\n";
+    });
+    
+    // Create download link
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `orders_export_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    
+    // Download the CSV file
+    link.click();
+    document.body.removeChild(link);
   };
 
   // Filter orders based on filters
   const filteredOrders = orders.filter(order => {
-    // Search filter
+    // Search filter - check order number, customer name, etc.
     const searchLower = filters.search.toLowerCase();
-    const matchesSearch = order.id.toLowerCase().includes(searchLower) ||
-                          order.customer.toLowerCase().includes(searchLower) ||
-                          order.restaurant.toLowerCase().includes(searchLower);
+    const matchesSearch = (order.orderNumber?.toLowerCase().includes(searchLower) || 
+                           order.restaurant?.name?.toLowerCase().includes(searchLower));
     
     // Status filter
     const matchesStatus = filters.status === 'all' || order.status === filters.status;
     
     // Type filter
-    const matchesType = filters.type === 'all' || order.type === filters.type;
+    const matchesType = filters.type === 'all' || order.orderType === filters.type;
     
-    // Date filter
-    const matchesDate = !filters.date || order.date.startsWith(filters.date);
+    // Restaurant filter
+    const matchesRestaurant = filters.restaurant === 'all' || order.restaurant?.id === filters.restaurant;
     
-    return matchesSearch && matchesStatus && matchesType && matchesDate;
+    // Date filter - check if the order date contains the filter date
+    const matchesDate = !filters.date || order.createdAt.includes(filters.date);
+    
+    return matchesSearch && matchesStatus && matchesType && matchesRestaurant && matchesDate;
   });
 
   // Get current orders for pagination
-  const liveOrders = filteredOrders.filter(order => !['delivered', 'cancelled'].includes(order.status));
-  const historyOrders = filteredOrders.filter(order => ['delivered', 'cancelled'].includes(order.status));
+  const liveOrders = filteredOrders.filter(order => !['DELIVERED', 'COMPLETED', 'CANCELLED'].includes(order.status));
+  const historyOrders = filteredOrders.filter(order => ['DELIVERED', 'COMPLETED', 'CANCELLED'].includes(order.status));
   
   // Calculate pagination for live orders
   const indexOfLastLive = currentPage * itemsPerPage;
@@ -207,17 +236,21 @@ const OrdersList = () => {
   // Function to get status badge variant
   const getStatusBadgeVariant = (status) => {
     switch(status) {
-      case 'pending':
+      case 'PENDING':
         return 'primary';
-      case 'preparing':
+      case 'CONFIRMED':
         return 'warning';
-      case 'ready':
+      case 'PREPARING':
         return 'info';
-      case 'in_transit':
+      case 'READY':
+        return 'info';
+      case 'DELIVERING':
         return 'secondary';
-      case 'delivered':
+      case 'DELIVERED':
         return 'success';
-      case 'cancelled':
+      case 'COMPLETED':
+        return 'success';
+      case 'CANCELLED':
         return 'danger';
       default:
         return 'secondary';
@@ -226,34 +259,88 @@ const OrdersList = () => {
 
   // Function to format the status text
   const formatStatus = (status) => {
-    return status
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
   };
 
   // Function to format the date
   const formatDate = (dateString) => {
-    const options = { 
-      year: 'numeric', 
-      month: '2-digit', 
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleString('en-GB', {
+      year: 'numeric',
+      month: '2-digit',
       day: '2-digit',
-      hour: '2-digit', 
+      hour: '2-digit',
       minute: '2-digit'
-    };
-    return new Date(dateString).toLocaleString('en-GB', options);
+    });
   };
+
+  // Calculate total amount from order items
+  const calculateTotal = (items) => {
+    if (!items || !Array.isArray(items)) return 0;
+    return items.reduce((sum, item) => {
+      return sum + (parseFloat(item.price) * item.quantity);
+    }, 0);
+  };
+
+  // Reset filters
+  const resetFilters = () => {
+    setFilters({
+      search: '',
+      status: 'all',
+      type: 'all',
+      date: '',
+      restaurant: 'all'
+    });
+  };
+
+  if (loading && orders.length === 0) {
+    return (
+      <AdminLayout title="Orders Management">
+        <div className="container-fluid p-4 text-center">
+          <div className="spinner-border text-warning mt-5" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-3">Loading orders...</p>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout title="Orders Management">
       <div className="container-fluid p-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h1 className="h2 fw-bold">Orders</h1>
-          <Button variant="primary" onClick={handleExportOrders} className="d-flex align-items-center">
-            <Download size={18} className="me-2" />
-            Export Orders
-          </Button>
+          <div>
+            <h1 className="h3 fw-bold mb-0">Orders Management</h1>
+            <p className="text-muted">Manage and track all customer orders</p>
+          </div>
+          <div className="d-flex gap-2">
+            <Button 
+              variant="outline-secondary" 
+              onClick={fetchOrders}
+              disabled={loading}
+            >
+              <RefreshCw size={18} className={`me-1 ${loading ? 'spinner' : ''}`} />
+              Refresh
+            </Button>
+            <Button 
+              variant="warning" 
+              onClick={handleExportOrders}
+              className="d-flex align-items-center"
+            >
+              <Download size={18} className="me-1" />
+              Export Orders
+            </Button>
+          </div>
         </div>
+
+        {/* Error message */}
+        {error && (
+          <div className="alert alert-danger d-flex align-items-center mb-4">
+            <AlertCircle size={18} className="me-2" />
+            {error}
+          </div>
+        )}
 
         {/* Filters and Search */}
         <div className="card mb-4">
@@ -262,11 +349,11 @@ const OrdersList = () => {
               <div className="col-md-6 position-relative">
                 <div className="input-group">
                   <span className="input-group-text bg-light">
-                    <Search />
+                    <Search size={18} />
                   </span>
                   <Form.Control
                     type="text"
-                    placeholder="Search orders..."
+                    placeholder="Search by order number or restaurant..."
                     value={filters.search}
                     onChange={(e) => setFilters({...filters, search: e.target.value})}
                   />
@@ -274,37 +361,50 @@ const OrdersList = () => {
               </div>
               
               <div className="col-md-6">
-                <div className="d-flex flex-column flex-md-row gap-2">
+                <div className="d-flex gap-2">
                   <Form.Select 
                     value={filters.status}
                     onChange={(e) => setFilters({...filters, status: e.target.value})}
-                    className="flex-grow-1"
                   >
                     <option value="all">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="preparing">Preparing</option>
-                    <option value="ready">Ready</option>
-                    <option value="in_transit">In Transit</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="cancelled">Cancelled</option>
+                    {ORDER_STATUSES.map(status => (
+                      <option key={status} value={status}>
+                        {formatStatus(status)}
+                      </option>
+                    ))}
                   </Form.Select>
                   
                   <Form.Select 
                     value={filters.type}
                     onChange={(e) => setFilters({...filters, type: e.target.value})}
-                    className="flex-grow-1"
                   >
                     <option value="all">All Types</option>
-                    <option value="delivery">Delivery</option>
-                    <option value="pickup">Pickup</option>
+                    {ORDER_TYPES.map(type => (
+                      <option key={type} value={type}>
+                        {type.charAt(0) + type.slice(1).toLowerCase()}
+                      </option>
+                    ))}
                   </Form.Select>
                   
-                  <Form.Control 
-                    type="date" 
-                    value={filters.date}
-                    onChange={(e) => setFilters({...filters, date: e.target.value})}
-                    className="flex-grow-1"
-                  />
+                  <Form.Select 
+                    value={filters.restaurant}
+                    onChange={(e) => setFilters({...filters, restaurant: e.target.value})}
+                  >
+                    <option value="all">All Restaurants</option>
+                    {restaurants.map(restaurant => (
+                      <option key={restaurant.id} value={restaurant.id}>
+                        {restaurant.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  
+                  <Button 
+                    variant="outline-secondary" 
+                    onClick={resetFilters}
+                    title="Reset filters"
+                  >
+                    <X size={18} />
+                  </Button>
                 </div>
               </div>
             </div>
@@ -313,9 +413,9 @@ const OrdersList = () => {
 
         {/* Live Orders Section */}
         <div className="card mb-4">
-          <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Live Orders</h5>
-            <span className="text-muted small">
+          <div className="card-header d-flex justify-content-between align-items-center bg-warning bg-opacity-10">
+            <h5 className="mb-0">Active Orders</h5>
+            <span className="badge bg-warning text-dark">
               {liveOrders.length} active orders
             </span>
           </div>
@@ -324,103 +424,95 @@ const OrdersList = () => {
               <Table hover>
                 <thead className="table-light">
                   <tr>
-                    <th>Order ID</th>
-                    <th>Customer</th>
+                    <th>Order #</th>
                     <th>Restaurant</th>
-                    <th>Time</th>
-                    <th>Total</th>
+                    <th>Date & Time</th>
                     <th>Type</th>
+                    <th>Total</th>
+                    <th>Payment</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentLiveOrders.map(order => (
-                    <tr key={order.id}>
-                      <td className="fw-medium">{order.id}</td>
-                      <td>{order.customer}</td>
-                      <td>{order.restaurant}</td>
-                      <td>{formatDate(order.date)}</td>
-                      <td>£{order.total.toFixed(2)}</td>
-                      <td>
-                        <Badge bg={order.type === 'delivery' ? 'primary' : 'success'} text="white">
-                          {order.type.charAt(0).toUpperCase() + order.type.slice(1)}
-                        </Badge>
-                      </td>
-                      <td>
-                        <Badge bg={getStatusBadgeVariant(order.status)}>
-                          {formatStatus(order.status)}
-                        </Badge>
-                      </td>
-                      <td>
-                        <div className="d-flex gap-2">
-                          <Button 
-                            variant="link" 
-                            className="p-0 text-primary" 
-                            onClick={() => handleViewOrder(order.id)}
-                          >
-                            <Eye size={18} />
-                          </Button>
-                          
-                          {order.type === 'delivery' && order.status === 'ready' && (
+                  {currentLiveOrders.length > 0 ? (
+                    currentLiveOrders.map(order => (
+                      <tr key={order.id}>
+                        <td className="fw-medium">{order.orderNumber}</td>
+                        <td>{order.restaurant?.name || 'Unknown'}</td>
+                        <td>{formatDate(order.createdAt)}</td>
+                        <td>
+                          <Badge bg={order.orderType === 'DELIVERY' ? 'primary' : 'success'} text="white">
+                            {order.orderType === 'DELIVERY' ? 'Delivery' : 'Pickup'}
+                          </Badge>
+                        </td>
+                        <td>£{parseFloat(order.total).toFixed(2)}</td>
+                        <td>
+                          <Badge bg={order.paymentStatus === 'PAID' ? 'success' : 'warning'}>
+                            {order.paymentMethod} ({order.paymentStatus})
+                          </Badge>
+                        </td>
+                        <td>
+                          <Badge bg={getStatusBadgeVariant(order.status)}>
+                            {formatStatus(order.status)}
+                          </Badge>
+                        </td>
+                        <td>
+                          <div className="d-flex gap-2">
+                            <Button 
+                              variant="outline-primary" 
+                              size="sm"
+                              onClick={() => handleViewOrder(order.id)}
+                              title="View Order Details"
+                            >
+                              <Eye size={16} />
+                            </Button>
+                            
                             <Dropdown>
-                              <Dropdown.Toggle variant="link" className="p-0 text-secondary" id={`driver-dropdown-${order.id}`}>
-                                <Truck size={18} />
+                              <Dropdown.Toggle 
+                                variant="outline-warning" 
+                                size="sm"
+                                id={`status-dropdown-${order.id}`}
+                                title="Update Status"
+                              >
+                                <Clock size={16} />
                               </Dropdown.Toggle>
 
                               <Dropdown.Menu>
-                                <Dropdown.Header>Assign Driver:</Dropdown.Header>
-                                {drivers
-                                  .filter(driver => driver.status === 'available')
-                                  .map(driver => (
-                                    <Dropdown.Item 
-                                      key={driver.id}
-                                      onClick={() => handleAssignDriver(order.id, driver.id)}
+                                <Dropdown.Header>Update Status:</Dropdown.Header>
+                                {ORDER_STATUSES
+                                  .filter(status => status !== order.status)
+                                  .map(status => (
+                                    <Dropdown.Item
+                                      key={status}
+                                      onClick={() => handleStatusUpdate(order.id, status)}
                                     >
-                                      {driver.name}
+                                      {formatStatus(status)}
                                     </Dropdown.Item>
                                   ))
                                 }
                               </Dropdown.Menu>
                             </Dropdown>
-                          )}
-                          
-                          <Dropdown>
-                            <Dropdown.Toggle variant="link" className="p-0 text-warning" id={`status-dropdown-${order.id}`}>
-                              <Clock size={18} />
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                              <Dropdown.Header>Update Status:</Dropdown.Header>
-                              {['pending', 'preparing', 'ready', 'in_transit', 'delivered', 'cancelled']
-                                .filter(status => status !== order.status)
-                                .map(status => (
-                                  <Dropdown.Item
-                                    key={status}
-                                    onClick={() => handleStatusUpdate(order.id, status)}
-                                  >
-                                    {formatStatus(status)}
-                                  </Dropdown.Item>
-                                ))
-                              }
-                            </Dropdown.Menu>
-                          </Dropdown>
-                          
-                          <Button 
-                            variant="link" 
-                            className="p-0 text-danger"
-                            onClick={() => handleStatusUpdate(order.id, 'cancelled')}
-                          >
-                            <X size={18} />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                  {currentLiveOrders.length === 0 && (
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
                     <tr>
-                      <td colSpan="8" className="text-center py-4 text-muted">
-                        No active orders found
+                      <td colSpan="8" className="text-center py-4">
+                        <div className="text-muted">
+                          <AlertCircle size={24} className="mb-2" />
+                          <p>No active orders found</p>
+                          {(filters.search || filters.status !== 'all' || filters.type !== 'all' || filters.restaurant !== 'all') && (
+                            <Button 
+                              variant="outline-secondary" 
+                              size="sm"
+                              onClick={resetFilters}
+                            >
+                              Clear Filters
+                            </Button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   )}
@@ -476,9 +568,9 @@ const OrdersList = () => {
 
         {/* Order History Section */}
         <div className="card">
-          <div className="card-header d-flex justify-content-between align-items-center">
+          <div className="card-header d-flex justify-content-between align-items-center bg-secondary bg-opacity-10">
             <h5 className="mb-0">Order History</h5>
-            <span className="text-muted small">
+            <span className="badge bg-secondary">
               {historyOrders.length} completed orders
             </span>
           </div>
@@ -487,49 +579,67 @@ const OrdersList = () => {
               <Table hover>
                 <thead className="table-light">
                   <tr>
-                    <th>Order ID</th>
-                    <th>Customer</th>
+                    <th>Order #</th>
                     <th>Restaurant</th>
-                    <th>Time</th>
-                    <th>Total</th>
+                    <th>Date & Time</th>
                     <th>Type</th>
+                    <th>Total</th>
+                    <th>Payment</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentHistoryOrders.map(order => (
-                    <tr key={order.id}>
-                      <td className="fw-medium">{order.id}</td>
-                      <td>{order.customer}</td>
-                      <td>{order.restaurant}</td>
-                      <td>{formatDate(order.date)}</td>
-                      <td>£{order.total.toFixed(2)}</td>
-                      <td>
-                        <Badge bg={order.type === 'delivery' ? 'primary' : 'success'} text="white">
-                          {order.type.charAt(0).toUpperCase() + order.type.slice(1)}
-                        </Badge>
-                      </td>
-                      <td>
-                        <Badge bg={getStatusBadgeVariant(order.status)}>
-                          {formatStatus(order.status)}
-                        </Badge>
-                      </td>
-                      <td>
-                        <Button 
-                          variant="link" 
-                          className="p-0 text-primary"
-                          onClick={() => handleViewOrder(order.id)}
-                        >
-                          <Eye size={18} />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                  {currentHistoryOrders.length === 0 && (
+                  {currentHistoryOrders.length > 0 ? (
+                    currentHistoryOrders.map(order => (
+                      <tr key={order.id}>
+                        <td className="fw-medium">{order.orderNumber}</td>
+                        <td>{order.restaurant?.name || 'Unknown'}</td>
+                        <td>{formatDate(order.createdAt)}</td>
+                        <td>
+                          <Badge bg={order.orderType === 'DELIVERY' ? 'primary' : 'success'} text="white">
+                            {order.orderType === 'DELIVERY' ? 'Delivery' : 'Pickup'}
+                          </Badge>
+                        </td>
+                        <td>£{parseFloat(order.total).toFixed(2)}</td>
+                        <td>
+                          <Badge bg={order.paymentStatus === 'PAID' ? 'success' : 'warning'}>
+                            {order.paymentMethod} ({order.paymentStatus})
+                          </Badge>
+                        </td>
+                        <td>
+                          <Badge bg={getStatusBadgeVariant(order.status)}>
+                            {formatStatus(order.status)}
+                          </Badge>
+                        </td>
+                        <td>
+                          <Button 
+                            variant="outline-primary" 
+                            size="sm"
+                            onClick={() => handleViewOrder(order.id)}
+                            title="View Order Details"
+                          >
+                            <Eye size={16} />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
                     <tr>
-                      <td colSpan="8" className="text-center py-4 text-muted">
-                        No completed orders found
+                      <td colSpan="8" className="text-center py-4">
+                        <div className="text-muted">
+                          <AlertCircle size={24} className="mb-2" />
+                          <p>No order history found</p>
+                          {(filters.search || filters.status !== 'all' || filters.type !== 'all' || filters.restaurant !== 'all') && (
+                            <Button 
+                              variant="outline-secondary" 
+                              size="sm"
+                              onClick={resetFilters}
+                            >
+                              Clear Filters
+                            </Button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   )}
@@ -586,39 +696,97 @@ const OrdersList = () => {
         {/* Order Details Modal */}
         <Modal show={showDetails} onHide={handleCloseDetails} size="lg">
           <Modal.Header closeButton>
-            <Modal.Title>Order Details - {selectedOrder?.id}</Modal.Title>
+            <Modal.Title>
+              Order Details - {selectedOrder?.orderNumber}
+              {selectedOrder && (
+                <Badge 
+                  className="ms-2" 
+                  bg={getStatusBadgeVariant(selectedOrder.status)}
+                >
+                  {formatStatus(selectedOrder.status)}
+                </Badge>
+              )}
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {selectedOrder && (
+            {loadingDetails ? (
+              <div className="text-center py-4">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <p className="mt-2">Loading order details...</p>
+              </div>
+            ) : selectedOrder ? (
               <>
                 <div className="row mb-4">
                   <div className="col-md-6">
-                    <h5 className="text-secondary mb-3">Customer Information</h5>
-                    <p><span className="fw-medium">Name:</span> {selectedOrder.customer}</p>
-                    {selectedOrder.address && (
-                      <p><span className="fw-medium">Address:</span> {selectedOrder.address}</p>
+                    <h5 className="text-secondary mb-3">Order Information</h5>
+                    <div className="mb-2 d-flex align-items-start">
+                      <Calendar size={18} className="me-2 text-primary mt-1" />
+                      <div>
+                        <div className="fw-medium">Date & Time</div>
+                        <div>{formatDate(selectedOrder.createdAt)}</div>
+                      </div>
+                    </div>
+                    <div className="mb-2 d-flex align-items-start">
+                      <ShoppingBag size={18} className="me-2 text-primary mt-1" />
+                      <div>
+                        <div className="fw-medium">Order Type</div>
+                        <div>{selectedOrder.orderType === 'DELIVERY' ? 'Delivery' : 'Pickup'}</div>
+                      </div>
+                    </div>
+                    {selectedOrder.scheduledTime && (
+                      <div className="mb-2 d-flex align-items-start">
+                        <Clock size={18} className="me-2 text-primary mt-1" />
+                        <div>
+                          <div className="fw-medium">Scheduled Time</div>
+                          <div>{formatDate(selectedOrder.scheduledTime)}</div>
+                        </div>
+                      </div>
                     )}
-                    <p>
-                      <span className="fw-medium">Order Type:</span> 
-                      <Badge className="ms-2" bg={selectedOrder.type === 'delivery' ? 'primary' : 'success'}>
-                        {selectedOrder.type.charAt(0).toUpperCase() + selectedOrder.type.slice(1)}
-                      </Badge>
-                    </p>
-                    <p><span className="fw-medium">Payment Method:</span> {selectedOrder.paymentMethod}</p>
+                    <div className="mb-2 d-flex align-items-start">
+                      <DollarSign size={18} className="me-2 text-primary mt-1" />
+                      <div>
+                        <div className="fw-medium">Payment</div>
+                        <div>{selectedOrder.paymentMethod} - {selectedOrder.paymentStatus}</div>
+                      </div>
+                    </div>
                   </div>
                   
                   <div className="col-md-6">
-                    <h5 className="text-secondary mb-3">Order Information</h5>
-                    <p><span className="fw-medium">Restaurant:</span> {selectedOrder.restaurant}</p>
-                    <p><span className="fw-medium">Date:</span> {formatDate(selectedOrder.date)}</p>
-                    <p>
-                      <span className="fw-medium">Status:</span> 
-                      <Badge className="ms-2" bg={getStatusBadgeVariant(selectedOrder.status)}>
-                        {formatStatus(selectedOrder.status)}
-                      </Badge>
-                    </p>
-                    {selectedOrder.driver && (
-                      <p><span className="fw-medium">Driver:</span> {selectedOrder.driver}</p>
+                    <h5 className="text-secondary mb-3">Restaurant & Delivery</h5>
+                    <div className="mb-2 d-flex align-items-start">
+                      <Utensils size={18} className="me-2 text-primary mt-1" />
+                      <div>
+                        <div className="fw-medium">Restaurant</div>
+                        <div>{selectedOrder.restaurant?.name}</div>
+                        <div className="small text-muted">{selectedOrder.restaurant?.address}</div>
+                      </div>
+                    </div>
+                    
+                    {selectedOrder.orderType === 'DELIVERY' && (
+                      <div className="mb-2 d-flex align-items-start">
+                        <MapPin size={18} className="me-2 text-primary mt-1" />
+                        <div>
+                          <div className="fw-medium">Delivery Address</div>
+                          <div>
+                            {selectedOrder.addressDetails}, {selectedOrder.address}
+                          </div>
+                          <div>
+                            {selectedOrder.city}, {selectedOrder.postcode}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {selectedOrder.notes && (
+                      <div className="mb-2 d-flex align-items-start">
+                        <MessageCircle size={18} className="me-2 text-primary mt-1" />
+                        <div>
+                          <div className="fw-medium">Notes</div>
+                          <div>{selectedOrder.notes}</div>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -627,63 +795,92 @@ const OrdersList = () => {
                 <Table striped bordered>
                   <thead className="table-light">
                     <tr>
-                      <th>Item</th>
-                      <th className="text-center">Quantity</th>
-                      <th className="text-end">Price</th>
-                      <th className="text-end">Total</th>
+                      <th style={{ width: '55%' }}>Item</th>
+                      <th className="text-center" style={{ width: '15%' }}>Quantity</th>
+                      <th className="text-end" style={{ width: '15%' }}>Price</th>
+                      <th className="text-end" style={{ width: '15%' }}>Total</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedOrder.items.map((item, index) => (
-                      <tr key={index}>
-                        <td>{item.name}</td>
-                        <td className="text-center">{item.quantity}</td>
-                        <td className="text-end">£{item.price.toFixed(2)}</td>
-                        <td className="text-end">£{(item.quantity * item.price).toFixed(2)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  <tfoot className="table-light">
-                    <tr>
-                      <td colSpan="3" className="text-end fw-medium">Total:</td>
-                      <td className="text-end fw-bold">£{selectedOrder.total.toFixed(2)}</td>
+                    {selectedOrder.orderItems?.map((item) => (
+                      <tr key={item.id}>
+                      <td>
+                        <div className="fw-medium">{item.menuItem?.name}</div>
+                        {item.notes && <div className="small text-muted">Note: {item.notes}</div>}
+                      </td>
+                      <td className="text-center">{item.quantity}</td>
+                      <td className="text-end">£{parseFloat(item.price).toFixed(2)}</td>
+                      <td className="text-end">£{(item.quantity * parseFloat(item.price)).toFixed(2)}</td>
                     </tr>
-                  </tfoot>
-                </Table>
-              </>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            {selectedOrder && selectedOrder.status !== 'cancelled' && selectedOrder.status !== 'delivered' && (
-              <>
-                <Button 
-                  variant="success"
-                  onClick={() => {
-                    handleStatusUpdate(selectedOrder.id, 'delivered');
-                    handleCloseDetails();
-                  }}
-                >
-                  Mark as Delivered
-                </Button>
-                <Button 
-                  variant="danger"
-                  onClick={() => {
-                    handleStatusUpdate(selectedOrder.id, 'cancelled');
-                    handleCloseDetails();
-                  }}
-                >
-                  Cancel Order
-                </Button>
-              </>
-            )}
-            <Button variant="secondary" onClick={handleCloseDetails}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </div>
-    </AdminLayout>
-  );
+                  ))}
+                </tbody>
+                <tfoot className="table-light">
+                  <tr>
+                    <td colSpan="3" className="text-end fw-medium">Subtotal:</td>
+                    <td className="text-end">£{calculateTotal(selectedOrder.orderItems).toFixed(2)}</td>
+                  </tr>
+                  {selectedOrder.deliveryFee && (
+                    <tr>
+                      <td colSpan="3" className="text-end">Delivery Fee:</td>
+                      <td className="text-end">£{parseFloat(selectedOrder.deliveryFee).toFixed(2)}</td>
+                    </tr>
+                  )}
+                  {selectedOrder.tip && parseFloat(selectedOrder.tip) > 0 && (
+                    <tr>
+                      <td colSpan="3" className="text-end">Tip:</td>
+                      <td className="text-end">£{parseFloat(selectedOrder.tip).toFixed(2)}</td>
+                    </tr>
+                  )}
+                  <tr>
+                    <td colSpan="3" className="text-end fw-bold">Total:</td>
+                    <td className="text-end fw-bold">£{parseFloat(selectedOrder.total).toFixed(2)}</td>
+                  </tr>
+                </tfoot>
+              </Table>
+            </>
+          ) : (
+            <div className="text-center py-4 text-muted">
+              <AlertCircle size={24} className="mb-2" />
+              <p>Order details not available</p>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          {selectedOrder && !['DELIVERED', 'COMPLETED', 'CANCELLED'].includes(selectedOrder.status) && (
+            <div className="me-auto">
+              <Dropdown>
+                <Dropdown.Toggle variant="warning" id="dropdown-status">
+                  Update Status
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {ORDER_STATUSES
+                    .filter(status => status !== selectedOrder.status)
+                    .map(status => (
+                      <Dropdown.Item
+                        key={status}
+                        onClick={() => {
+                          handleStatusUpdate(selectedOrder.id, status);
+                        }}
+                      >
+                        {formatStatus(status)}
+                      </Dropdown.Item>
+                    ))
+                  }
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          )}
+          <Button 
+            variant="secondary" 
+            onClick={handleCloseDetails}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  </AdminLayout>
+);
 };
 
 export default OrdersList;
